@@ -93,10 +93,10 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .adm{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;background:var(--bg);overflow:auto;overscroll-behavior:contain}
 .adm[hidden]{display:none}
 .ah{position:sticky;top:0;z-index:3;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 0}
-.ah-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;max-width:760px;margin:0 auto}
+.ah-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;max-width:760px;margin:0 auto}
 .adm h2{font:800 26px/1.1 var(--hf),sans-serif;margin:0}
 .adm h3{font:800 20px/1.2 var(--hf),sans-serif;margin:22px 0 10px}
-.status{font-size:14px;color:var(--mute);text-align:right}
+.status{flex:1 1 180px;font-size:14px;color:var(--mute);text-align:right}
 .status.err{color:var(--red);font-weight:700}
 .tabs{display:flex;gap:2px;overflow-x:auto;max-width:760px;margin:6px auto 0;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -139,6 +139,11 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .rng output{width:52px;text-align:right;color:var(--mute)}
 .note{background:var(--redT);border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:15px}
 .hint{font-size:14px;color:var(--mute);margin:-6px 0 12px}
+.adm a{color:var(--red)}
+.ghd{margin:14px 0 4px;background:var(--card);border-radius:10px;padding:12px 14px}
+.ghd summary{cursor:pointer;font-weight:700}
+.ghd ol{padding-left:20px;margin:10px 0}
+.ghd li{margin:4px 0}
 .pin{max-width:360px;margin:0 auto;padding:calc(40px + env(safe-area-inset-top)) 20px 40px;display:grid;gap:12px}
 .pin form{display:grid;gap:10px}
 .pin .err{color:var(--red);min-height:1.5em;margin:0}
@@ -260,6 +265,12 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
   "Перевір фото й відео: дата, місце, зворотний пошук.",
   "Винеси вердикт і запиши дату перевірки."
  ],
+ "gh": {
+  "owner": "Canutogava",
+  "repo": "fake-chy-fakt",
+  "branch": "main",
+  "path": "index.html"
+ },
  "questions": [
   {
    "k": "Заголовок відео в TikTok",
@@ -377,9 +388,9 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 
 <script>
 {
-const KEY='fcq-config-v2',PINKEY='fcq-pin-ok';
+const KEY='fcq-config-v2',PINKEY='fcq-pin-ok',TOKKEY='fcq-gh-token';
 const FONTS={"Sofia Sans Condensed":"400;500;700;800;900","Sofia Sans":"400;500;700;800;900","Montserrat":"400;500;700;800;900","Rubik":"400;500;700;800;900","Unbounded":"400;500;700;800;900","Nunito":"400;500;700;800;900","Inter":"400;500;700;800;900","Roboto Condensed":"400;500;700;800;900","Oswald":"400;500;700","PT Sans":"400;700"};
-const DEF={title:"Фейк *чи* факт?",sub:"",foot:"",theme:"auto",accent:"#ff4a1c",ok:"#0f7a3d",bgL:"#ffffff",bgD:"#120d0b",radius:14,hf:"Sofia Sans Condensed",bf:"Sofia Sans",stamp:true,shuffleQ:false,shuffleO:false,adminLink:true,pin:"1234",btnNext:"Далі",btnEnd:"Мій результат",btnAgain:"Пройти ще раз",hi:90,msgHi:"",mid:60,msgMid:"",msgLo:"",tipsTitle:"Алгоритм перевірки",tips:[],questions:[]};
+const DEF={title:"Фейк *чи* факт?",sub:"",foot:"",theme:"auto",accent:"#ff4a1c",ok:"#0f7a3d",bgL:"#ffffff",bgD:"#120d0b",radius:14,hf:"Sofia Sans Condensed",bf:"Sofia Sans",stamp:true,shuffleQ:false,shuffleO:false,adminLink:true,pin:"1234",btnNext:"Далі",btnEnd:"Мій результат",btnAgain:"Пройти ще раз",hi:90,msgHi:"",mid:60,msgMid:"",msgLo:"",tipsTitle:"Алгоритм перевірки",tips:[],gh:{owner:"Canutogava",repo:"fake-chy-fakt",branch:"main",path:"index.html"},questions:[]};
 const LOOK=['theme','accent','ok','bgL','bgD','radius','hf','bf'];
 const PRESETS=[["Факт","Фейк"],["Факт","Маніпуляція"],["Підтверджено","Не підтверджено"],["Так","Ні"]];
 const $=(s,r=document)=>r.querySelector(s);
@@ -398,6 +409,7 @@ function norm(x){
   const c={...DEF,...x};
   for(const k of ['title','sub','foot','pin','btnNext','btnEnd','btnAgain','msgHi','msgMid','msgLo','tipsTitle'])c[k]=String(c[k]??'');
   c.questions=(Array.isArray(x.questions)?x.questions:[]).map(q=>({k:String(q?.k??''),q:String(q?.q??''),o:[String(q?.o?.[0]??''),String(q?.o?.[1]??'')],a:q?.a==1?1:0,w:String(q?.w??''),s:String(q?.s??'')}));
+  const g=x.gh&&typeof x.gh==='object'?x.gh:{};c.gh={};for(const k in DEF.gh)c.gh[k]=String(g[k]??DEF.gh[k]).trim()||DEF.gh[k];
   c.tips=Array.isArray(c.tips)?c.tips.map(String).filter(Boolean):[];
   for(const k of ['accent','ok','bgL','bgD'])if(!hex(c[k]))c[k]=DEF[k];
   if(!FONTS[c.hf])c.hf=DEF.hf;if(!FONTS[c.bf])c.bf=DEF.bf;
@@ -520,7 +532,7 @@ app.addEventListener('click',e=>{
 
 /* ---------- адмінка ---------- */
 const adm=$('#adm');
-let D=null,tab='q',dirty=false,armed=null,stt={t:'',err:false};
+let D=null,tab='q',dirty=false,armed=null,stt={t:'',err:false},tokMem=store.get(TOKKEY)||'',pub=false;
 function status(t,err){stt={t,err:!!err};const s=$('#stt');if(s){s.textContent=t;s.className='status'+(err?' err':'')}}
 function openAdmin(){
   adm.hidden=false;document.body.style.overflow='hidden';
@@ -587,9 +599,23 @@ function body(){
   ${T('tipsTitle','Заголовок блоку порад',D.tipsTitle)}
   ${TA('tips','Поради (кожна з нового рядка; порожньо = без блоку)',D.tips.join('\n'),'rows="6" data-lines')}`;
   return `
-  ${hasLocal?`<div class="note">Зараз тест у цьому браузері показує збережену чернетку, а не версію з файлу.<div class="btns" style="margin-bottom:0"><button type="button" class="btn" data-act="drop">Відкинути чернетку</button></div></div>`:''}
-  <p>«Зберегти» запам'ятовує зміни <b>лише в цьому браузері</b>. Щоб їх побачили учні, завантаж готовий HTML і заміни ним файл там, де лежить тест.</p>
-  <div class="btns"><button type="button" class="btn pri" data-act="exphtml">Завантажити HTML</button>
+  ${hasLocal&&!pub?`<div class="note">Зараз тест у цьому браузері показує збережену чернетку, а не версію з файлу.<div class="btns" style="margin-bottom:0"><button type="button" class="btn" data-act="drop">Відкинути чернетку</button></div></div>`:''}
+  <h3 style="margin-top:0">Публікація на сайт</h3>
+  <p class="hint" style="margin-top:0">«Зберегти» запам'ятовує зміни лише в цьому браузері. Щоб їх побачили всі, натисни «Опублікувати на сайт»: тест відправиться на GitHub, і сайт оновиться за 1–2 хвилини (іноді до 10, тоді онови сторінку).</p>
+  <label class="fld"><span>Токен доступу GitHub</span><input type="password" id="ghtok" autocomplete="off" spellcheck="false" autocapitalize="off" value="${esc(tokMem)}" placeholder="github_pat_…"></label>
+  <label class="chk"><input type="checkbox" id="ghrem"${store.get(TOKKEY)?' checked':''}><span>Запам'ятати токен у цьому браузері</span></label>
+  <button type="button" class="btn pri wide" data-act="publish">Опублікувати на сайт</button>
+  <details class="ghd"><summary>Як отримати токен і куди публікується</summary>
+  <ol><li>Відкрий <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+  <li>Назва будь-яка, термін дії обери сама.</li>
+  <li><b>Repository access</b> → Only select repositories → <b>${esc(D.gh.repo)}</b>.</li>
+  <li><b>Permissions</b> → Repository permissions → <b>Contents: Read and write</b>.</li>
+  <li><b>Generate token</b>, скопіюй і встав сюди.</li></ol>
+  <p class="hint">Токен зберігається лише в цьому браузері й не потрапляє в код сайту. Нікому його не передавай.</p>
+  <div class="row2">${T('gh.owner','Власник (логін GitHub)',D.gh.owner)}${T('gh.repo','Репозиторій',D.gh.repo)}</div>
+  <div class="row2">${T('gh.branch','Гілка',D.gh.branch)}${T('gh.path','Файл',D.gh.path)}</div></details>
+  <h3>Файли</h3>
+  <div class="btns"><button type="button" class="btn" data-act="exphtml">Завантажити HTML</button>
   <button type="button" class="btn" data-act="expjson">Експорт JSON</button>
   <label class="btn">Імпорт JSON<input type="file" id="impf" accept=".json,application/json" hidden></label></div>
   <h3>Доступ</h3>
@@ -598,7 +624,7 @@ function body(){
 }
 function renderAdmin(top){
   const sy=adm.scrollTop;
-  const tabs=[['q',`Запитання (${D.questions.length})`],['look','Вигляд'],['txt','Тексти'],['file','Файл і доступ']];
+  const tabs=[['q',`Запитання (${D.questions.length})`],['look','Вигляд'],['txt','Тексти'],['file','Публікація']];
   adm.innerHTML=`<div class="ah"><div class="ah-top"><h2>Адмінка</h2><span class="status${stt.err?' err':''}" id="stt" aria-live="polite">${esc(stt.t)}</span></div>
   <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" aria-selected="${tab===k}" data-act="tab" data-v="${k}">${l}</button>`).join('')}</div></div>
   <div class="ab">${body()}</div>
@@ -654,6 +680,7 @@ adm.addEventListener('click',e=>{
       if(dirty&&!b.dataset.sure){b.dataset.sure='1';b.textContent='Не зберігати?';return}
       closeAdmin();break;
     case 'exphtml':exportHTML();break;
+    case 'publish':publish(b);break;
     case 'expjson':download(JSON.stringify(norm(clone(D)),null,2),'fake-chy-fakt.json','application/json');status('JSON завантажено');break;
     case 'drop':store.del(KEY);hasLocal=false;C=EMB;D=clone(C);dirty=false;applyLook(C);start();stt={t:'Чернетку відкинуто',err:false};renderAdmin();break;
   }
@@ -664,9 +691,41 @@ function save(){
   if(bad>-1){tab='q';stt={t:`№${bad+1}: заповни текст і обидва варіанти`,err:true};renderAdmin();$('#qe'+bad).scrollIntoView({behavior:motion(),block:'center'});return}
   C=norm(clone(D));
   const ok=store.set(KEY,JSON.stringify({base:EMBS,cfg:C}));
-  hasLocal=ok;if(C.pin)store.set(PINKEY,C.pin,1);
+  hasLocal=ok;pub=false;if(C.pin)store.set(PINKEY,C.pin,1);
   dirty=false;applyLook(C);start();
   stt=ok?{t:'Збережено в цьому браузері ✓',err:false}:{t:'Браузер не дав зберегти. Завантаж HTML',err:true};
+  renderAdmin();
+}
+const b64=s=>{const u=new TextEncoder().encode(s);let r='';for(let k=0;k<u.length;k+=0x8000)r+=String.fromCharCode.apply(null,u.subarray(k,k+0x8000));return btoa(r)};
+async function publish(btn){
+  const bad=invalid();
+  if(bad>-1){tab='q';stt={t:`№${bad+1}: заповни текст і обидва варіанти`,err:true};renderAdmin();return}
+  const tok=($('#ghtok').value||'').trim();
+  if(!tok){status('Встав токен GitHub',true);$('#ghtok').focus();return}
+  tokMem=tok;if($('#ghrem').checked)store.set(TOKKEY,tok);else store.del(TOKKEY);
+  const cfg=norm(clone(D)),g=cfg.gh;
+  const api=`https://api.github.com/repos/${encodeURIComponent(g.owner)}/${encodeURIComponent(g.repo)}/contents/${g.path.split('/').map(encodeURIComponent).join('/')}`;
+  const H={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+  btn.disabled=true;btn.textContent='Публікую…';status('Публікую…');
+  let msg='',ok=false;
+  try{
+    const content=b64(buildHTML(cfg));
+    for(let t=0;t<2&&!ok;t++){
+      let sha;
+      const r=await fetch(api+'?ref='+encodeURIComponent(g.branch)+'&t='+Date.now(),{headers:H,cache:'no-store'});
+      if(r.ok)sha=(await r.json()).sha;else if(r.status!==404)throw r;
+      const w=await fetch(api,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({message:'Оновлення тесту з адмінки',content,branch:g.branch,...(sha?{sha}:{})})});
+      if(w.ok)ok=true;else if(!((w.status===409||w.status===422)&&t===0))throw w;
+    }
+  }catch(e){
+    const st=e&&e.status;
+    msg=st===401?'Токен невірний або прострочений':st===403?'Токену бракує права Contents: Read and write':st===404?'Репозиторій не знайдено або токен не має до нього доступу':st?'Помилка GitHub '+st:'Немає зʼєднання з GitHub';
+  }
+  if(ok){
+    C=cfg;hasLocal=store.set(KEY,JSON.stringify({base:EMBS,cfg:C}));if(C.pin)store.set(PINKEY,C.pin,1);
+    dirty=false;pub=true;applyLook(C);start();
+    stt={t:'Опубліковано ✓ Сайт оновиться за 1–2 хв',err:false};
+  }else stt={t:msg,err:true};
   renderAdmin();
 }
 function exportHTML(){
