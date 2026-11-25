@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="uk" style="--red:#ff4a1c;--r:14px;--hf:&quot;Sofia Sans Condensed&quot;;--bf:&quot;Sofia Sans&quot;;--bgL:#ffffff;--cardL:#f1f1f1;--lineL:#dbdbdb;--muteL:#676767;--okL:#0f7a3d;--okTL:#ddece4;--redTL:#ffe6df;--bgD:#120d0b;--cardD:#201b18;--lineD:#342f2c;--muteD:#a39e99;--okD:#7bb694;--okTD:#21251e;--redTD:#33160d"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<title>Фейк чи факт?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link id="fontlink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Condensed:wght@400;500;700;800;900&amp;family=Sofia+Sans:wght@400;500;700;800;900&amp;display=swap">
+<style>
+/* VOICE: швидкий шкільний тест, чіткий і бадьорий, без дитячості
+   IDEA: картка фактчекера зі штампом вердикту
+   LAYOUT: одна колонка, телефон насамперед; два великі варіанти, кнопка «Далі» липне до низу екрана
+   Кольори, шрифти й тексти задаються в адмінці (#admin) */
+:root{
+  --red:#ff4a1c;--r:14px;--hf:"Sofia Sans Condensed";--bf:"Sofia Sans";
+  --bgL:#ffffff;--cardL:#f1f1f1;--lineL:#dbdbdb;--muteL:#676767;--okL:#0f7a3d;--okTL:#ddece4;--redTL:#ffe6df;
+  --bgD:#120d0b;--cardD:#201b18;--lineD:#342f2c;--muteD:#a39e99;--okD:#7bb694;--okTD:#21251e;--redTD:#33160d;
+  --bg:var(--bgL);--ink:#111111;--card:var(--cardL);--line:var(--lineL);--mute:var(--muteL);--ok:var(--okL);--okT:var(--okTL);--redT:var(--redTL);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:var(--bgD);--ink:#f4efe9;--card:var(--cardD);--line:var(--lineD);--mute:var(--muteD);--ok:var(--okD);--okT:var(--okTD);--redT:var(--redTD);color-scheme:dark}}
+:root[data-theme=dark]{--bg:var(--bgD);--ink:#f4efe9;--card:var(--cardD);--line:var(--lineD);--mute:var(--muteD);--ok:var(--okD);--okT:var(--okTD);--redT:var(--redTD);color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--bf),system-ui,sans-serif;overflow-x:hidden;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+.wrap{max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+  padding:max(18px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+@media (min-width:600px){.wrap{padding-top:40px;padding-left:24px;padding-right:24px}}
+h1{font:900 clamp(38px,11vw,60px)/1 var(--hf),sans-serif;margin:0 0 8px;text-wrap:balance}
+h1 span{color:var(--red)}
+.sub{color:var(--mute);margin:0 0 18px;font-size:16px}
+#app{flex:1}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.bar i{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:10px;color:var(--mute);font-size:15px;margin-bottom:12px}
+.card{position:relative;background:var(--card);border-radius:var(--r);padding:20px 18px 66px;min-height:170px;overflow:hidden}
+.card.ns{padding-bottom:24px}
+.card .k{font-size:14px;color:var(--mute);margin-bottom:8px}
+.card .q{font:800 clamp(23px,6.4vw,32px)/1.15 var(--hf),sans-serif;text-wrap:pretty;overflow-wrap:anywhere}
+.stamp{position:absolute;right:14px;bottom:14px;max-width:calc(100% - 28px);transform:rotate(-7deg) scale(1.6);opacity:0;border:4px solid currentColor;border-radius:8px;padding:2px 12px;font:900 24px/1.1 var(--hf),sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:transform .25s,opacity .25s;pointer-events:none}
+.stamp.on{opacity:.92;transform:rotate(-7deg) scale(1)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.opts.long{grid-template-columns:1fr}
+.opts button,.opts label{min-height:64px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px 14px;border-radius:calc(var(--r)*.75);border:2px solid var(--line);background:var(--bg);color:inherit;font:700 18px/1.25 var(--bf),sans-serif;cursor:pointer;overflow-wrap:anywhere;transition:border-color .15s,background .15s}
+.opts.long button,.opts.long label{justify-content:flex-start;text-align:left;font-size:17px}
+.opts button:active:not(:disabled){background:var(--card)}
+@media (hover:hover){.opts button:hover:not(:disabled){border-color:var(--ink)}}
+.opts button:focus-visible,.go:focus-visible,.admlink:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.opts button.right{border-color:var(--ok);background:var(--okT)}
+.opts button.wrong{border-color:var(--red);background:var(--redT)}
+.opts button:disabled{cursor:default;color:inherit}
+.opts button:disabled:not(.right):not(.wrong){opacity:.55}
+.why{border-left:4px solid var(--red);padding:4px 0 4px 14px;margin:6px 0 18px;display:none}
+.why.on{display:block}
+.why b{display:block}
+.go{width:100%;min-height:56px;border:0;border-radius:calc(var(--r)*.75);background:var(--ink);color:var(--bg);font:800 20px var(--hf),sans-serif;cursor:pointer}
+.go[hidden]{display:none}
+#go{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2;box-shadow:0 8px 24px rgb(0 0 0/.18)}
+.end{text-align:center}
+.score{font:900 clamp(72px,24vw,120px)/1 var(--hf),sans-serif;color:var(--red);margin:10px 0}
+.tips{text-align:left;background:var(--card);border-radius:var(--r);padding:18px 20px;margin:20px 0}
+.tips ol{margin:8px 0 0;padding-left:22px}
+.tips li{margin:4px 0}
+.empty{color:var(--mute);background:var(--card);border-radius:var(--r);padding:20px}
+footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between}
+.admlink{display:none;border:0;background:none;color:var(--mute);font:500 14px var(--bf),sans-serif;text-decoration:underline;text-underline-offset:3px;padding:6px 0;cursor:pointer}
+.js .admlink{display:inline}.admlink[hidden],.js .admlink[hidden]{display:none}
+
+/* ---------- версія без JavaScript (перегляд у Telegram на iPhone тощо) ---------- */
+.static{counter-reset:done score;padding-bottom:64px}
+.snote{color:var(--mute);font-size:15px;margin:0 0 14px}
+.sq{position:relative;margin-bottom:30px}
+.sq input{position:absolute;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.sq input:checked{counter-increment:done}
+.sq input.c:checked{counter-increment:done score}
+.opts label{cursor:pointer;-webkit-user-select:none;user-select:none}
+.sq input:checked ~ .opts label{pointer-events:none;opacity:.55}
+.sq.a0 input:checked ~ .opts .l0,.sq.a1 input:checked ~ .opts .l1{border-color:var(--ok);background:var(--okT);opacity:1}
+.sq.a0 .i1:checked ~ .opts .l1,.sq.a1 .i0:checked ~ .opts .l0{border-color:var(--red);background:var(--redT);opacity:1}
+.sq input:checked ~ .why{display:block}
+.why .r,.why .x{display:none}
+.sq input.c:checked ~ .why .r,.sq input.w:checked ~ .why .x{display:block}
+.sq input:checked ~ .card .stamp{opacity:.92;-webkit-transform:rotate(-7deg) scale(1);transform:rotate(-7deg) scale(1)}
+.sq input.c:checked ~ .card .stamp{color:var(--ok)}
+.sq input.w:checked ~ .card .stamp{color:var(--red)}
+.cd:before{content:counter(done)}
+.cs:before{content:counter(score)}
+.sbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;gap:10px;background:var(--ink);color:var(--bg);font:700 16px var(--bf),sans-serif;padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.sbar i,.score i{font-style:normal}
+@media (prefers-reduced-motion:reduce){.stamp,.bar i{transition:none}}
+
+/* ---------- адмінка ---------- */
+.adm{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;background:var(--bg);overflow:auto;overscroll-behavior:contain}
+.adm[hidden]{display:none}
+.ah{position:sticky;top:0;z-index:3;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 0}
+.ah-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;max-width:760px;margin:0 auto}
+.adm h2{font:800 26px/1.1 var(--hf),sans-serif;margin:0}
+.adm h3{font:800 20px/1.2 var(--hf),sans-serif;margin:22px 0 10px}
+.status{font-size:14px;color:var(--mute);text-align:right}
+.status.err{color:var(--red);font-weight:700}
+.tabs{display:flex;gap:2px;overflow-x:auto;max-width:760px;margin:6px auto 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;padding:10px 12px;border:0;background:none;color:var(--mute);font:700 15px var(--bf),sans-serif;border-bottom:3px solid transparent;cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--red)}
+.ab{max-width:760px;margin:0 auto;padding:16px 16px 130px}
+.af{position:fixed;left:0;right:0;bottom:0;z-index:3;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center}
+.af .btn{flex:1;max-width:240px}
+.fld{display:block;margin:0 0 12px}
+.fld>span{display:block;font-size:14px;color:var(--mute);margin-bottom:4px;font-weight:500}
+.adm input[type=text],.adm input[type=password],.adm input[type=number],.adm textarea,.adm select{width:100%;font:16px/1.4 var(--bf),system-ui,sans-serif;color:inherit;background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:10px 12px}
+.adm textarea{resize:vertical;min-height:64px}
+.adm input:focus,.adm textarea:focus,.adm select:focus{outline:none;border-color:var(--red)}
+.adm input.bad{border-color:var(--red)}
+.qe{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.qe-h{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.qe-h b{flex:1;font:800 20px var(--hf),sans-serif}
+.ib{min-width:42px;height:42px;padding:0 8px;border:2px solid var(--line);background:var(--bg);color:inherit;border-radius:8px;font:700 16px var(--bf),sans-serif;cursor:pointer}
+.ib:disabled{opacity:.35;cursor:default}
+.ib.del{color:var(--red)}
+.optrow{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.rad{display:flex;align-items:center;gap:6px;font-size:14px;min-height:44px;padding:0 10px;border:2px solid var(--line);border-radius:8px;background:var(--bg);cursor:pointer;white-space:nowrap}
+.rad:has(input:checked){border-color:var(--ok);color:var(--ok);font-weight:700}
+.rad input{width:18px;height:18px;margin:0;accent-color:var(--ok)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--mute);border-radius:99px;padding:6px 12px;font:500 14px var(--bf),sans-serif;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:0 18px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:inherit;font:700 16px var(--bf),sans-serif;cursor:pointer;text-align:center}
+.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.wide{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+@media (max-width:520px){.row2,.row3{grid-template-columns:1fr}}
+.color{display:flex;gap:8px;align-items:center}
+.color input[type=color]{flex:none;width:52px;height:46px;border:2px solid var(--line);border-radius:8px;padding:2px;background:var(--bg);cursor:pointer}
+.chk{display:flex;gap:10px;align-items:center;min-height:46px;cursor:pointer}
+.chk input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--red)}
+.rng{display:flex;gap:12px;align-items:center}
+.rng input{flex:1;accent-color:var(--red)}
+.rng output{width:52px;text-align:right;color:var(--mute)}
+.note{background:var(--redT);border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:15px}
+.hint{font-size:14px;color:var(--mute);margin:-6px 0 12px}
+.pin{max-width:360px;margin:0 auto;padding:calc(40px + env(safe-area-inset-top)) 20px 40px;display:grid;gap:12px}
+.pin form{display:grid;gap:10px}
+.pin .err{color:var(--red);min-height:1.5em;margin:0}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1 id="ttl">Фейк <span>чи</span> факт?</h1>
+  <p class="sub" id="sub">10 запитань за матеріалами нашого дослідження. Обирай одну з двох відповідей і дивись пояснення фактчекера.</p>
+  <div id="app"><div class="static"><p class="snote">Обери відповідь у кожній картці, пояснення з'явиться одразу. Рахунок унизу екрана.</p>
+<section class="sq a1">
+<input type="radio" name="s0" id="s0a0" class="i0 w"><input type="radio" name="s0" id="s0a1" class="i1 c">
+<div class="meta"><span>Запитання 1 з 10</span></div>
+<div class="card"><div class="k">Заголовок відео в TikTok</div><div class="q">«Увага! Рада дозволила мобілізувати жінок! Парламент ухвалив у першому читанні законопроєкт!»</div><div class="stamp">Маніпуляція</div></div>
+<div class="opts"><label for="s0a0" class="l0">Факт</label><label for="s0a1" class="l1">Маніпуляція</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Маніпуляція.</b>7.02.2024 Рада ухвалила в першому читанні загальний законопроєкт про мобілізацію. Норм про мобілізацію жінок у ньому немає, а перше читання ще не робить його законом.</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s1" id="s1a0" class="i0 w"><input type="radio" name="s1" id="s1a1" class="i1 c">
+<div class="meta"><span>Запитання 2 з 10</span></div>
+<div class="card"><div class="k">Скриншот у соцмережах</div><div class="q">Бригада розсилає жінкам SMS із закликом іти воювати</div><div class="stamp">Фейк</div></div>
+<div class="opts"><label for="s1a0" class="l0">Факт</label><label for="s1a1" class="l1">Фейк</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Фейк.</b>Скриншот підроблений, у ньому є мовні помилки («baby»). Бригада це спростувала, ArmyInform і StopFake розібрали фейк (4.02.2026).</div>
+</section>
+<section class="sq a0">
+<input type="radio" name="s2" id="s2a0" class="i0 c"><input type="radio" name="s2" id="s2a1" class="i1 w">
+<div class="meta"><span>Запитання 3 з 10</span></div>
+<div class="card"><div class="k">Новина</div><div class="q">День десантно-штурмових військ відтепер відзначають 8 листопада</div><div class="stamp">Факт</div></div>
+<div class="opts"><label for="s2a0" class="l0">Факт</label><label for="s2a1" class="l1">Фейк</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Факт.</b>Дату перенесено указом №817/2025 від 4.11.2025, це підтвердило командування ДШВ.</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s3" id="s3a0" class="i0 w"><input type="radio" name="s3" id="s3a1" class="i1 c">
+<div class="meta"><span>Запитання 4 з 10</span></div>
+<div class="card"><div class="k">Повідомлення в Telegram</div><div class="q">З вересня в Україні мобілізують до мільйона жінок</div><div class="stamp">Фейк</div></div>
+<div class="opts"><label for="s3a0" class="l0">Факт</label><label for="s3a1" class="l1">Фейк</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Фейк.</b>Центр протидії дезінформації спростував це як російський фейк (червень 2025).</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s4" id="s4a0" class="i0 w"><input type="radio" name="s4" id="s4a1" class="i1 c">
+<div class="meta"><span>Запитання 5 з 10</span></div>
+<div class="card"><div class="k">Підпис у відео</div><div class="q">«З 1 грудня бізнес мусить подавати дані про працівників у ТЦК»</div><div class="stamp">Не підтверджено</div></div>
+<div class="opts"><label for="s4a0" class="l0">Підтверджено</label><label for="s4a1" class="l1">Не підтверджено</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Не підтверджено.</b>Передачу даних про працівників до ТЦК регулює Порядок №812, але норми, яка діє саме «з 1 грудня», фактчекер не знайшов.</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s5" id="s5a0" class="i0 w"><input type="radio" name="s5" id="s5a1" class="i1 c">
+<div class="meta"><span>Запитання 6 з 10</span></div>
+<div class="card"><div class="k">Заголовок відео депутата</div><div class="q">«ТЦК остаточно вб'є українську економіку». Що це?</div><div class="stamp">Думка</div></div>
+<div class="opts long"><label for="s5a0" class="l0">Перевірений факт</label><label for="s5a1" class="l1">Оцінка автора, а не факт</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Оцінка автора, а не факт.</b>Слово «остаточно» і прогноз «вб'є економіку» виражають думку автора. Перевірити таке твердження як факт неможливо.</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s6" id="s6a0" class="i0 w"><input type="radio" name="s6" id="s6a1" class="i1 c">
+<div class="meta"><span>Запитання 7 з 10</span></div>
+<div class="card ns"><div class="k">Що означає</div><div class="q">Законопроєкт ухвалили в першому читанні</div></div>
+<div class="opts long"><label for="s6a0" class="l0">Закон уже діє</label><label for="s6a1" class="l1">Документ ще можуть змінити або відхилити</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Документ ще можуть змінити або відхилити.</b>Після першого читання документ доопрацьовують. Законом він стане лише після другого читання, підпису Президента й публікації.</div>
+</section>
+<section class="sq a0">
+<input type="radio" name="s7" id="s7a0" class="i0 c"><input type="radio" name="s7" id="s7a1" class="i1 w">
+<div class="meta"><span>Запитання 8 з 10</span></div>
+<div class="card ns"><div class="k">Психологічний прийом</div><div class="q">Тисячі лайків під дописом (часто від ботоферм) змушують думати, що так вважає більшість. Як це називається?</div></div>
+<div class="opts long"><label for="s7a0" class="l0">Ефект соціального доказу</label><label for="s7a1" class="l1">Інформаційна бульбашка</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Ефект соціального доказу.</b>Соціальний доказ: людина орієнтується на те, що нібито підтримують інші. Боти штучно створюють таку «більшість».</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s8" id="s8a0" class="i0 w"><input type="radio" name="s8" id="s8a1" class="i1 c">
+<div class="meta"><span>Запитання 9 з 10</span></div>
+<div class="card ns"><div class="k">Алгоритми</div><div class="q">Стрічка показує тобі лише те, що збігається з твоїми поглядами. Це…</div></div>
+<div class="opts"><label for="s8a0" class="l0">Свобода інформації</label><label for="s8a1" class="l1">Інформаційна бульбашка</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Інформаційна бульбашка.</b>Алгоритм підбирає звичний контент, і людина перестає бачити інші точки зору. Ефект посилює схильність шукати підтвердження своїм думкам.</div>
+</section>
+<section class="sq a1">
+<input type="radio" name="s9" id="s9a0" class="i0 w"><input type="radio" name="s9" id="s9a1" class="i1 c">
+<div class="meta"><span>Запитання 10 з 10</span></div>
+<div class="card"><div class="k">Алгоритм фактчекера</div><div class="q">Заголовок викликав сильну емоцію. Що зробити першим?</div><div class="stamp">Стоп</div></div>
+<div class="opts long"><label for="s9a0" class="l0">Одразу поділитися з друзями</label><label for="s9a1" class="l1">Зупинитися й не поширювати, доки не перевіриш</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: Зупинитися й не поширювати, доки не перевіриш.</b>Перший крок алгоритму: стоп. Потім шукаємо першоджерело, звіряємо зі StopFake, VoxCheck, ЦПД, Detector Media, перевіряємо фото й відео.</div>
+</section>
+<div class="end"><div class="score"><i class="cs"></i>/10</div>
+<div class="tips"><b>Алгоритм перевірки</b><ol><li>Стоп. Сильна емоція в заголовку є першим сигналом.</li><li>Знайди першоджерело: закон, постанову, офіційний канал.</li><li>Звір зі StopFake, VoxCheck, ЦПД, Detector Media.</li><li>Перевір фото й відео: дата, місце, зворотний пошук.</li><li>Винеси вердикт і запиши дату перевірки.</li></ol></div></div>
+<div class="sbar"><span>Відповіді: <i class="cd"></i> з 10</span><span>Правильно: <i class="cs"></i></span></div></div></div>
+  <footer class="small"><span id="foot">Проєкт «Соціальні мережі як інструмент демократії та маніпуляції». Вердикти з датою перевірки 19.11.2026.</span><button type="button" class="admlink" id="admlink">Адмінка</button></footer>
+</main>
+<div class="adm" id="adm" hidden="" role="dialog" aria-modal="true" aria-label="Адмінка тесту"></div>
+
+<script type="application/json" id="cfg">
+{
+ "title": "Фейк *чи* факт?",
+ "sub": "10 запитань за матеріалами нашого дослідження. Обирай одну з двох відповідей і дивись пояснення фактчекера.",
+ "foot": "Проєкт «Соціальні мережі як інструмент демократії та маніпуляції». Вердикти з датою перевірки 19.11.2026.",
+ "theme": "auto",
+ "accent": "#ff4a1c",
+ "ok": "#0f7a3d",
+ "bgL": "#ffffff",
+ "bgD": "#120d0b",
+ "radius": 14,
+ "hf": "Sofia Sans Condensed",
+ "bf": "Sofia Sans",
+ "stamp": true,
+ "shuffleQ": false,
+ "shuffleO": false,
+ "adminLink": true,
+ "pin": "1234",
+ "btnNext": "Далі",
+ "btnEnd": "Мій результат",
+ "btnAgain": "Пройти ще раз",
+ "hi": 90,
+ "msgHi": "Тебе важко обдурити.",
+ "mid": 60,
+ "msgMid": "Непогано, але пильності ще додай.",
+ "msgLo": "Варто частіше перевіряти, що читаєш.",
+ "tipsTitle": "Алгоритм перевірки",
+ "tips": [
+  "Стоп. Сильна емоція в заголовку є першим сигналом.",
+  "Знайди першоджерело: закон, постанову, офіційний канал.",
+  "Звір зі StopFake, VoxCheck, ЦПД, Detector Media.",
+  "Перевір фото й відео: дата, місце, зворотний пошук.",
+  "Винеси вердикт і запиши дату перевірки."
+ ],
+ "questions": [
+  {
+   "k": "Заголовок відео в TikTok",
+   "q": "«Увага! Рада дозволила мобілізувати жінок! Парламент ухвалив у першому читанні законопроєкт!»",
+   "o": [
+    "Факт",
+    "Маніпуляція"
+   ],
+   "a": 1,
+   "w": "7.02.2024 Рада ухвалила в першому читанні загальний законопроєкт про мобілізацію. Норм про мобілізацію жінок у ньому немає, а перше читання ще не робить його законом.",
+   "s": ""
+  },
+  {
+   "k": "Скриншот у соцмережах",
+   "q": "Бригада розсилає жінкам SMS із закликом іти воювати",
+   "o": [
+    "Факт",
+    "Фейк"
+   ],
+   "a": 1,
+   "w": "Скриншот підроблений, у ньому є мовні помилки («baby»). Бригада це спростувала, ArmyInform і StopFake розібрали фейк (4.02.2026).",
+   "s": ""
+  },
+  {
+   "k": "Новина",
+   "q": "День десантно-штурмових військ відтепер відзначають 8 листопада",
+   "o": [
+    "Факт",
+    "Фейк"
+   ],
+   "a": 0,
+   "w": "Дату перенесено указом №817/2025 від 4.11.2025, це підтвердило командування ДШВ.",
+   "s": ""
+  },
+  {
+   "k": "Повідомлення в Telegram",
+   "q": "З вересня в Україні мобілізують до мільйона жінок",
+   "o": [
+    "Факт",
+    "Фейк"
+   ],
+   "a": 1,
+   "w": "Центр протидії дезінформації спростував це як російський фейк (червень 2025).",
+   "s": ""
+  },
+  {
+   "k": "Підпис у відео",
+   "q": "«З 1 грудня бізнес мусить подавати дані про працівників у ТЦК»",
+   "o": [
+    "Підтверджено",
+    "Не підтверджено"
+   ],
+   "a": 1,
+   "w": "Передачу даних про працівників до ТЦК регулює Порядок №812, але норми, яка діє саме «з 1 грудня», фактчекер не знайшов.",
+   "s": ""
+  },
+  {
+   "k": "Заголовок відео депутата",
+   "q": "«ТЦК остаточно вб'є українську економіку». Що це?",
+   "o": [
+    "Перевірений факт",
+    "Оцінка автора, а не факт"
+   ],
+   "a": 1,
+   "w": "Слово «остаточно» і прогноз «вб'є економіку» виражають думку автора. Перевірити таке твердження як факт неможливо.",
+   "s": "Думка"
+  },
+  {
+   "k": "Що означає",
+   "q": "Законопроєкт ухвалили в першому читанні",
+   "o": [
+    "Закон уже діє",
+    "Документ ще можуть змінити або відхилити"
+   ],
+   "a": 1,
+   "w": "Після першого читання документ доопрацьовують. Законом він стане лише після другого читання, підпису Президента й публікації.",
+   "s": ""
+  },
+  {
+   "k": "Психологічний прийом",
+   "q": "Тисячі лайків під дописом (часто від ботоферм) змушують думати, що так вважає більшість. Як це називається?",
+   "o": [
+    "Ефект соціального доказу",
+    "Інформаційна бульбашка"
+   ],
+   "a": 0,
+   "w": "Соціальний доказ: людина орієнтується на те, що нібито підтримують інші. Боти штучно створюють таку «більшість».",
+   "s": ""
+  },
+  {
+   "k": "Алгоритми",
+   "q": "Стрічка показує тобі лише те, що збігається з твоїми поглядами. Це…",
+   "o": [
+    "Свобода інформації",
+    "Інформаційна бульбашка"
+   ],
+   "a": 1,
+   "w": "Алгоритм підбирає звичний контент, і людина перестає бачити інші точки зору. Ефект посилює схильність шукати підтвердження своїм думкам.",
+   "s": ""
+  },
+  {
+   "k": "Алгоритм фактчекера",
+   "q": "Заголовок викликав сильну емоцію. Що зробити першим?",
+   "o": [
+    "Одразу поділитися з друзями",
+    "Зупинитися й не поширювати, доки не перевіриш"
+   ],
+   "a": 1,
+   "w": "Перший крок алгоритму: стоп. Потім шукаємо першоджерело, звіряємо зі StopFake, VoxCheck, ЦПД, Detector Media, перевіряємо фото й відео.",
+   "s": "Стоп"
+  }
+ ]
+}
+</script>
+
+<script>
+{
+const KEY='fcq-config-v2',PINKEY='fcq-pin-ok';
+const FONTS={"Sofia Sans Condensed":"400;500;700;800;900","Sofia Sans":"400;500;700;800;900","Montserrat":"400;500;700;800;900","Rubik":"400;500;700;800;900","Unbounded":"400;500;700;800;900","Nunito":"400;500;700;800;900","Inter":"400;500;700;800;900","Roboto Condensed":"400;500;700;800;900","Oswald":"400;500;700","PT Sans":"400;700"};
+const DEF={title:"Фейк *чи* факт?",sub:"",foot:"",theme:"auto",accent:"#ff4a1c",ok:"#0f7a3d",bgL:"#ffffff",bgD:"#120d0b",radius:14,hf:"Sofia Sans Condensed",bf:"Sofia Sans",stamp:true,shuffleQ:false,shuffleO:false,adminLink:true,pin:"1234",btnNext:"Далі",btnEnd:"Мій результат",btnAgain:"Пройти ще раз",hi:90,msgHi:"",mid:60,msgMid:"",msgLo:"",tipsTitle:"Алгоритм перевірки",tips:[],questions:[]};
+const LOOK=['theme','accent','ok','bgL','bgD','radius','hf','bf'];
+const PRESETS=[["Факт","Фейк"],["Факт","Маніпуляція"],["Підтверджено","Не підтверджено"],["Так","Ні"]];
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const hex=v=>/^#[0-9a-f]{6}$/i.test(v);
+const plain=t=>String(t).replace(/\*/g,'');
+const SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML; // чиста копія сторінки для експорту
+document.documentElement.classList.add('js');
+const store={get(k,s){try{return(s?sessionStorage:localStorage).getItem(k)}catch(e){return null}},
+  set(k,v,s){try{(s?sessionStorage:localStorage).setItem(k,v);return true}catch(e){return false}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+function norm(x){
+  x=x&&typeof x==='object'?x:{};
+  const c={...DEF,...x};
+  for(const k of ['title','sub','foot','pin','btnNext','btnEnd','btnAgain','msgHi','msgMid','msgLo','tipsTitle'])c[k]=String(c[k]??'');
+  c.questions=(Array.isArray(x.questions)?x.questions:[]).map(q=>({k:String(q?.k??''),q:String(q?.q??''),o:[String(q?.o?.[0]??''),String(q?.o?.[1]??'')],a:q?.a==1?1:0,w:String(q?.w??''),s:String(q?.s??'')}));
+  c.tips=Array.isArray(c.tips)?c.tips.map(String).filter(Boolean):[];
+  for(const k of ['accent','ok','bgL','bgD'])if(!hex(c[k]))c[k]=DEF[k];
+  if(!FONTS[c.hf])c.hf=DEF.hf;if(!FONTS[c.bf])c.bf=DEF.bf;
+  if(!['auto','light','dark'].includes(c.theme))c.theme='auto';
+  c.radius=Math.max(0,Math.min(28,+c.radius||0));
+  c.hi=+c.hi||0;c.mid=+c.mid||0;
+  for(const k of ['stamp','shuffleQ','shuffleO','adminLink'])c[k]=!!c[k];
+  return c;
+}
+
+/* конфіг: вбудований у файл + локальна чернетка адміна (лише якщо файл не змінювався) */
+let EMB;try{EMB=norm(JSON.parse($('#cfg').textContent))}catch(e){EMB=norm(DEF)}
+const EMBS=JSON.stringify(EMB);
+let C=EMB,hasLocal=false;
+try{const s=JSON.parse(store.get(KEY)||'null');if(s&&s.base===EMBS&&s.cfg){C=norm(s.cfg);hasLocal=true}else if(s)store.del(KEY)}catch(e){}
+
+const fontURL=c=>'https://fonts.googleapis.com/css2?'+[...new Set([c.hf,c.bf])].map(f=>'family='+f.replace(/ /g,'+')+':wght@'+FONTS[f]).join('&')+'&display=swap';
+const rgb=h=>[1,3,5].map(k=>parseInt(h.substr(k,2),16));
+const mix=(a,b,p)=>{const x=rgb(a),y=rgb(b);return'#'+x.map((v,k)=>Math.round(v*p+y[k]*(1-p)).toString(16).padStart(2,'0')).join('')};
+function vars(c){
+  const iL='#111111',iD='#f4efe9',okD=mix(c.ok,'#ffffff',.55);
+  return{'--red':c.accent,'--r':c.radius+'px','--hf':`"${c.hf}"`,'--bf':`"${c.bf}"`,
+    '--bgL':c.bgL,'--cardL':mix(iL,c.bgL,.06),'--lineL':mix(iL,c.bgL,.15),'--muteL':mix(iL,c.bgL,.64),'--okL':c.ok,'--okTL':mix(c.ok,c.bgL,.14),'--redTL':mix(c.accent,c.bgL,.14),
+    '--bgD':c.bgD,'--cardD':mix(iD,c.bgD,.06),'--lineD':mix(iD,c.bgD,.15),'--muteD':mix(iD,c.bgD,.64),'--okD':okD,'--okTD':mix(okD,c.bgD,.14),'--redTD':mix(c.accent,c.bgD,.14)};
+}
+const titleHTML=t=>esc(t).replace(/\*(.+?)\*/g,'<span>$1</span>');
+function applyLook(c){
+  const R=document.documentElement;
+  for(const[k,v]of Object.entries(vars(c)))R.style.setProperty(k,v);
+  if(c.theme==='auto')delete R.dataset.theme;else R.dataset.theme=c.theme;
+  const fl=$('#fontlink'),u=fontURL(c);if(fl.getAttribute('href')!==u)fl.setAttribute('href',u);
+  $('#ttl').innerHTML=titleHTML(c.title);
+  document.title=plain(c.title)||'Тест';
+  $('#sub').textContent=c.sub;$('#sub').hidden=!c.sub;
+  $('#foot').textContent=c.foot;
+  $('#admlink').hidden=!c.adminLink;
+}
+/* статична версія тесту: працює без JavaScript (CSS-радіокнопки + лічильники) */
+function staticHTML(c){
+  const n=c.questions.length;
+  if(!n)return'<p class="empty">Запитань поки немає.</p>';
+  return `<div class="static"><p class="snote">Обери відповідь у кожній картці, пояснення з'явиться одразу. Рахунок унизу екрана.</p>
+${c.questions.map((q,x)=>{const t=q.o[q.a],stp=q.s||(t.length<=16?t:'');return `<section class="sq a${q.a}">
+<input type="radio" name="s${x}" id="s${x}a0" class="i0 ${q.a===0?'c':'w'}"><input type="radio" name="s${x}" id="s${x}a1" class="i1 ${q.a===1?'c':'w'}">
+<div class="meta"><span>Запитання ${x+1} з ${n}</span></div>
+<div class="card${c.stamp&&stp?'':' ns'}">${q.k?`<div class="k">${esc(q.k)}</div>`:''}<div class="q">${esc(q.q)}</div>${c.stamp&&stp?`<div class="stamp">${esc(stp)}</div>`:''}</div>
+<div class="opts${q.o.some(o=>o.length>22)?' long':''}"><label for="s${x}a0" class="l0">${esc(q.o[0])}</label><label for="s${x}a1" class="l1">${esc(q.o[1])}</label></div>
+<div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: ${esc(t)}.</b>${esc(q.w)}</div>
+</section>`}).join('\n')}
+<div class="end"><div class="score"><i class="cs"></i>/${n}</div>
+${c.tips.length?`<div class="tips"><b>${esc(c.tipsTitle)}</b><ol>${c.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>`:''}</div>
+<div class="sbar"><span>Відповіді: <i class="cd"></i> з ${n}</span><span>Правильно: <i class="cs"></i></span></div></div>`;
+}
+function buildHTML(cfg){
+  const doc=new DOMParser().parseFromString(SRC,'text/html'),R=doc.documentElement;
+  doc.getElementById('cfg').textContent='\n'+JSON.stringify(cfg,null,1).replace(/</g,'\\u003c')+'\n';
+  doc.title=plain(cfg.title)||'Тест';
+  R.classList.remove('js');if(!R.className)R.removeAttribute('class');
+  R.setAttribute('style',Object.entries(vars(cfg)).map(([k,v])=>k+':'+v).join(';'));
+  if(cfg.theme==='auto')R.removeAttribute('data-theme');else R.setAttribute('data-theme',cfg.theme);
+  doc.getElementById('fontlink').setAttribute('href',fontURL(cfg));
+  doc.getElementById('ttl').innerHTML=titleHTML(cfg.title);
+  const sb=doc.getElementById('sub');sb.textContent=cfg.sub;if(cfg.sub)sb.removeAttribute('hidden');else sb.setAttribute('hidden','');
+  doc.getElementById('foot').textContent=cfg.foot;
+  const al=doc.getElementById('admlink');if(cfg.adminLink)al.removeAttribute('hidden');else al.setAttribute('hidden','');
+  doc.getElementById('app').innerHTML=staticHTML(cfg);
+  return '<!DOCTYPE html>\n'+R.outerHTML;
+}
+
+/* ---------- тест ---------- */
+const app=$('#app');
+let order=[],i=0,score=0;
+const motion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+function start(){
+  const n=C.questions.length;order=[...Array(n).keys()];
+  if(C.shuffleQ)for(let k=n-1;k>0;k--){const j=Math.random()*(k+1)|0;[order[k],order[j]]=[order[j],order[k]]}
+  i=0;score=0;
+  if(n)show();else app.innerHTML='<p class="empty">Запитань поки немає. Додай їх в адмінці.</p>';
+}
+function show(){
+  const n=order.length,it=C.questions[order[i]];
+  const ord=C.shuffleO&&Math.random()<.5?[1,0]:[0,1];
+  const long=it.o.some(t=>t.length>22);
+  app.innerHTML=`<div class="bar"><i id="bar" style="width:${i/n*100}%"></i></div>
+  <div class="meta"><span>Запитання ${i+1} з ${n}</span><span id="sc">Правильно: ${score}</span></div>
+  <div class="card${C.stamp?'':' ns'}">${it.k?`<div class="k">${esc(it.k)}</div>`:''}<div class="q">${esc(it.q)}</div>${C.stamp?'<div class="stamp" id="st" aria-hidden="true"></div>':''}</div>
+  <div class="opts${long?' long':''}" role="group" aria-label="Варіанти відповіді">${ord.map(m=>`<button type="button" data-n="${m}">${esc(it.o[m])}</button>`).join('')}</div>
+  <div class="why" id="why" aria-live="polite"><b id="vd"></b>${esc(it.w)}</div>
+  <button class="go" id="go" type="button" hidden>${esc(i+1<n?C.btnNext:C.btnEnd)}</button>`;
+}
+function pick(n){
+  const it=C.questions[order[i]],ok=n===it.a;
+  app.querySelectorAll('.opts button').forEach(b=>{const k=+b.dataset.n;b.disabled=true;if(k===it.a)b.classList.add('right');else if(k===n)b.classList.add('wrong')});
+  if(ok)score++;
+  $('#sc').textContent='Правильно: '+score;
+  $('#bar').style.width=(i+1)/order.length*100+'%';
+  const st=$('#st');
+  if(st){const t=it.o[it.a];st.textContent=it.s||(t.length<=16?t:(ok?'Вірно':'Хибно'));st.style.color=ok?'var(--ok)':'var(--red)';st.classList.add('on')}
+  $('#vd').textContent=ok?'Правильно.':'Правильна відповідь: '+it.o[it.a]+'.';
+  const w=$('#why');w.classList.add('on');
+  const g=$('#go');g.hidden=false;try{g.focus({preventScroll:true})}catch(e){}
+  w.scrollIntoView({behavior:motion(),block:'nearest'});
+}
+function next(){
+  i++;i<order.length?show():end();
+  if(app.getBoundingClientRect().top<0)app.scrollIntoView({behavior:motion(),block:'start'});
+}
+function end(){
+  const n=order.length,p=score/n*100;
+  const m=p>=C.hi?C.msgHi:p>=C.mid?C.msgMid:C.msgLo;
+  app.innerHTML=`<div class="end"><div class="bar"><i style="width:100%"></i></div>
+  <div class="score">${score}/${n}</div>${m?`<p><b>${esc(m)}</b></p>`:''}
+  ${C.tips.length?`<div class="tips"><b>${esc(C.tipsTitle)}</b><ol>${C.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>`:''}
+  <button class="go" id="again" type="button">${esc(C.btnAgain)}</button></div>`;
+}
+app.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;
+  if(b.dataset.n!=null)pick(+b.dataset.n);else if(b.id==='go')next();else if(b.id==='again'){start();app.scrollIntoView({behavior:motion(),block:'start'})}
+});
+
+/* ---------- адмінка ---------- */
+const adm=$('#adm');
+let D=null,tab='q',dirty=false,armed=null,stt={t:'',err:false};
+function status(t,err){stt={t,err:!!err};const s=$('#stt');if(s){s.textContent=t;s.className='status'+(err?' err':'')}}
+function openAdmin(){
+  adm.hidden=false;document.body.style.overflow='hidden';
+  if(C.pin&&store.get(PINKEY,1)!==C.pin){renderPin();return}
+  D=clone(C);dirty=false;armed=null;tab='q';stt={t:hasLocal?'Активна чернетка з цього браузера':'',err:false};renderAdmin(true);
+}
+function closeAdmin(){
+  adm.hidden=true;adm.innerHTML='';document.body.style.overflow='';D=null;applyLook(C);
+  if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search);
+}
+function renderPin(){
+  adm.innerHTML=`<div class="pin"><h2>Адмінка</h2><form id="pinf"><label class="fld"><span>PIN-код</span><input type="password" id="pinv" inputmode="numeric" autocomplete="off"></label><button class="btn pri" type="submit">Увійти</button></form><p class="err" id="perr" aria-live="polite"></p><button type="button" class="btn" data-act="close">Назад до тесту</button></div>`;
+  setTimeout(()=>$('#pinv')?.focus(),50);
+}
+const T=(p,l,v,x='')=>`<label class="fld"><span>${l}</span><input type="text" data-p="${p}" value="${esc(v)}" ${x}></label>`;
+const TA=(p,l,v,x='')=>`<label class="fld"><span>${l}</span><textarea data-p="${p}" ${x}>${esc(v)}</textarea></label>`;
+const CH=(p,l,v)=>`<label class="chk"><input type="checkbox" data-p="${p}"${v?' checked':''}><span>${l}</span></label>`;
+const NUM=(p,l,v)=>`<label class="fld"><span>${l}</span><input type="number" min="0" max="100" inputmode="numeric" data-p="${p}" value="${esc(v)}"></label>`;
+const COL=(p,l,v)=>`<div class="fld"><span>${l}</span><div class="color"><input type="color" data-p="${p}" value="${v}" aria-label="${l}"><input type="text" data-p="${p}" value="${v}" maxlength="7" spellcheck="false" autocapitalize="off" aria-label="${l}, HEX"></div></div>`;
+const SEL=(p,l,v,o)=>`<label class="fld"><span>${l}</span><select data-p="${p}">${o.map(([a,b])=>`<option value="${esc(a)}"${a===v?' selected':''}>${esc(b)}</option>`).join('')}</select></label>`;
+const fontOpts=Object.keys(FONTS).map(f=>[f,f]);
+
+function qHTML(q,x,n){
+  return `<div class="qe" id="qe${x}"><div class="qe-h"><b>№${x+1}</b>
+  <button type="button" class="ib" data-act="up" data-i="${x}" aria-label="Перемістити вище"${x?'':' disabled'}>↑</button>
+  <button type="button" class="ib" data-act="down" data-i="${x}" aria-label="Перемістити нижче"${x<n-1?'':' disabled'}>↓</button>
+  <button type="button" class="ib" data-act="dup" data-i="${x}" aria-label="Дублювати">⧉</button>
+  <button type="button" class="ib del" data-act="del" data-i="${x}" aria-label="Видалити">${armed===x?'Видалити?':'✕'}</button></div>
+  ${T(`questions.${x}.k`,'Категорія (над карткою)',q.k,'placeholder="Напр.: Заголовок відео в TikTok"')}
+  ${TA(`questions.${x}.q`,'Твердження або запитання',q.q,'rows="2"')}
+  <div class="fld"><span>Два варіанти відповіді (познач правильний)</span>
+  ${[0,1].map(m=>`<div class="optrow"><label class="rad"><input type="radio" name="a${x}" value="${m}" data-p="questions.${x}.a"${q.a===m?' checked':''}>Правильна</label><input type="text" data-p="questions.${x}.o.${m}" value="${esc(q.o[m])}" placeholder="Варіант ${m+1}" aria-label="Варіант ${m+1}"></div>`).join('')}
+  <div class="presets">${PRESETS.map(([a,b])=>`<button type="button" class="chip" data-act="preset" data-i="${x}" data-v="${esc(a+'|'+b)}">${esc(a)} / ${esc(b)}</button>`).join('')}</div></div>
+  ${TA(`questions.${x}.w`,'Пояснення фактчекера',q.w,'rows="3"')}
+  ${T(`questions.${x}.s`,'Текст штампа (порожньо = правильна відповідь)',q.s,'maxlength="20"')}
+  </div>`;
+}
+function body(){
+  if(tab==='q')return `<p class="hint" style="margin-top:0">У кожному запитанні рівно два варіанти. Кнопки-шаблони під варіантами швидко підставляють типові пари.</p>
+  ${D.questions.map((q,x)=>qHTML(q,x,D.questions.length)).join('')}
+  <button type="button" class="btn wide" data-act="add">+ Додати запитання</button>`;
+  if(tab==='look')return `
+  ${SEL('theme','Тема',D.theme,[['auto','Як на пристрої'],['light','Завжди світла'],['dark','Завжди темна']])}
+  <div class="row2">${COL('accent','Акцентний колір',D.accent)}${COL('ok','Колір правильної відповіді',D.ok)}</div>
+  <div class="row2">${COL('bgL','Фон у світлій темі',D.bgL)}${COL('bgD','Фон у темній темі',D.bgD)}</div>
+  <div class="fld"><span>Заокруглення кутів</span><div class="rng"><input type="range" min="0" max="28" step="1" data-p="radius" value="${D.radius}" aria-label="Заокруглення кутів"><output>${D.radius} px</output></div></div>
+  <div class="row2">${SEL('hf','Шрифт заголовків',D.hf,fontOpts)}${SEL('bf','Шрифт тексту',D.bf,fontOpts)}</div>
+  <h3>Поведінка</h3>
+  ${CH('stamp','Ставити штамп на картку після відповіді',D.stamp)}
+  ${CH('shuffleQ','Перемішувати порядок запитань',D.shuffleQ)}
+  ${CH('shuffleO','Перемішувати порядок двох варіантів',D.shuffleO)}
+  ${CH('adminLink','Показувати посилання «Адмінка» внизу сторінки',D.adminLink)}
+  <p class="hint" style="margin-top:4px">Якщо посилання сховане, адмінка відкривається за адресою сторінки з <b>#admin</b> у кінці.</p>
+  <div class="btns"><button type="button" class="btn" data-act="lookreset">Повернути стандартний вигляд</button></div>`;
+  if(tab==='txt')return `
+  ${T('title','Заголовок',D.title)}<p class="hint">Слово в *зірочках* буде акцентного кольору.</p>
+  ${TA('sub','Підзаголовок',D.sub,'rows="2"')}
+  ${TA('foot','Текст унизу сторінки',D.foot,'rows="2"')}
+  <div class="row3">${T('btnNext','Кнопка «Далі»',D.btnNext)}${T('btnEnd','Кнопка в кінці',D.btnEnd)}${T('btnAgain','Кнопка «Ще раз»',D.btnAgain)}</div>
+  <h3>Результат</h3>
+  <div class="row2">${NUM('hi','Високий результат від, %',D.hi)}${T('msgHi','Повідомлення',D.msgHi)}</div>
+  <div class="row2">${NUM('mid','Середній результат від, %',D.mid)}${T('msgMid','Повідомлення',D.msgMid)}</div>
+  ${T('msgLo','Повідомлення для нижчого результату',D.msgLo)}
+  ${T('tipsTitle','Заголовок блоку порад',D.tipsTitle)}
+  ${TA('tips','Поради (кожна з нового рядка; порожньо = без блоку)',D.tips.join('\n'),'rows="6" data-lines')}`;
+  return `
+  ${hasLocal?`<div class="note">Зараз тест у цьому браузері показує збережену чернетку, а не версію з файлу.<div class="btns" style="margin-bottom:0"><button type="button" class="btn" data-act="drop">Відкинути чернетку</button></div></div>`:''}
+  <p>«Зберегти» запам'ятовує зміни <b>лише в цьому браузері</b>. Щоб їх побачили учні, завантаж готовий HTML і заміни ним файл там, де лежить тест.</p>
+  <div class="btns"><button type="button" class="btn pri" data-act="exphtml">Завантажити HTML</button>
+  <button type="button" class="btn" data-act="expjson">Експорт JSON</button>
+  <label class="btn">Імпорт JSON<input type="file" id="impf" accept=".json,application/json" hidden></label></div>
+  <h3>Доступ</h3>
+  ${T('pin','PIN-код для входу в адмінку (порожньо = без PIN)',D.pin,'autocomplete="off" spellcheck="false"')}
+  <p class="hint">PIN захищає від випадкових натискань, але його можна знайти в коді сторінки. Не використовуй важливий пароль.</p>`;
+}
+function renderAdmin(top){
+  const sy=adm.scrollTop;
+  const tabs=[['q',`Запитання (${D.questions.length})`],['look','Вигляд'],['txt','Тексти'],['file','Файл і доступ']];
+  adm.innerHTML=`<div class="ah"><div class="ah-top"><h2>Адмінка</h2><span class="status${stt.err?' err':''}" id="stt" aria-live="polite">${esc(stt.t)}</span></div>
+  <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" aria-selected="${tab===k}" data-act="tab" data-v="${k}">${l}</button>`).join('')}</div></div>
+  <div class="ab">${body()}</div>
+  <div class="af"><button type="button" class="btn" data-act="close">${dirty?'Закрити':'До тесту'}</button><button type="button" class="btn pri" data-act="save">Зберегти</button></div>`;
+  adm.scrollTop=top?0:sy;
+}
+function setP(o,p,v){const ks=p.split('.');let t=o;for(let k=0;k<ks.length-1;k++)t=t[ks[k]];t[ks[ks.length-1]]=v}
+function changed(msg){dirty=true;stt={t:msg||'Є незбережені зміни',err:false}}
+function onField(e){
+  const el=e.target,p=el.dataset.p;if(!p||!D)return;
+  let v=el.type==='checkbox'?el.checked:el.type==='radio'?+el.value:(el.type==='number'||el.type==='range')?+el.value:el.hasAttribute('data-lines')?el.value.split('\n').map(s=>s.trim()).filter(Boolean):el.value;
+  if(el.closest('.color')){
+    v=String(v).trim();if(v[0]!=='#')v='#'+v;
+    const okc=hex(v);el.classList.toggle('bad',!okc);if(!okc)return;
+    adm.querySelectorAll(`[data-p="${p}"]`).forEach(o=>{if(o!==el){o.value=v;o.classList.remove('bad')}});
+  }
+  if(el.type==='range')el.nextElementSibling.textContent=v+' px';
+  setP(D,p,v);changed();status(stt.t);
+  const cb=adm.querySelector('[data-act=close]');if(cb&&!cb.dataset.sure)cb.textContent='Закрити';
+  if(LOOK.includes(p))applyLook(norm(D));
+}
+adm.addEventListener('input',onField);
+adm.addEventListener('change',e=>{
+  if(e.target.id==='impf'){
+    const f=e.target.files[0];if(!f)return;
+    f.text().then(t=>{D=norm(JSON.parse(t));changed('Імпортовано. Натисни «Зберегти»');applyLook(D);renderAdmin(true)}).catch(()=>status('Не вдалося прочитати файл',true));
+    return;
+  }
+  onField(e);
+});
+adm.addEventListener('submit',e=>{
+  e.preventDefault();
+  if($('#pinv').value===C.pin){store.set(PINKEY,C.pin,1);D=clone(C);dirty=false;tab='q';stt={t:'',err:false};renderAdmin(true)}
+  else{$('#perr').textContent='Невірний PIN';$('#pinv').select()}
+});
+adm.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,x=+b.dataset.i,Qs=D&&D.questions;
+  if(a!=='del')armed=null;
+  switch(a){
+    case 'tab':tab=b.dataset.v;renderAdmin(true);break;
+    case 'add':{
+      Qs.push({k:'',q:'',o:['Факт','Фейк'],a:0,w:'',s:''});changed();renderAdmin();
+      const el=$('#qe'+(Qs.length-1));el.scrollIntoView({behavior:motion(),block:'center'});$('textarea',el).focus({preventScroll:true});break}
+    case 'up':if(x>0){[Qs[x-1],Qs[x]]=[Qs[x],Qs[x-1]];changed();renderAdmin()}break;
+    case 'down':if(x<Qs.length-1){[Qs[x+1],Qs[x]]=[Qs[x],Qs[x+1]];changed();renderAdmin()}break;
+    case 'dup':Qs.splice(x+1,0,clone(Qs[x]));changed();renderAdmin();break;
+    case 'del':if(armed===x){Qs.splice(x,1);armed=null;changed('Запитання видалено')}else armed=x;renderAdmin();break;
+    case 'preset':Qs[x].o=b.dataset.v.split('|');changed();renderAdmin();break;
+    case 'lookreset':LOOK.forEach(k=>D[k]=DEF[k]);changed();applyLook(norm(D));renderAdmin();break;
+    case 'save':save();break;
+    case 'close':
+      if(dirty&&!b.dataset.sure){b.dataset.sure='1';b.textContent='Не зберігати?';return}
+      closeAdmin();break;
+    case 'exphtml':exportHTML();break;
+    case 'expjson':download(JSON.stringify(norm(clone(D)),null,2),'fake-chy-fakt.json','application/json');status('JSON завантажено');break;
+    case 'drop':store.del(KEY);hasLocal=false;C=EMB;D=clone(C);dirty=false;applyLook(C);start();stt={t:'Чернетку відкинуто',err:false};renderAdmin();break;
+  }
+});
+function invalid(){return D.questions.findIndex(q=>!q.q.trim()||!q.o[0].trim()||!q.o[1].trim())}
+function save(){
+  const bad=invalid();
+  if(bad>-1){tab='q';stt={t:`№${bad+1}: заповни текст і обидва варіанти`,err:true};renderAdmin();$('#qe'+bad).scrollIntoView({behavior:motion(),block:'center'});return}
+  C=norm(clone(D));
+  const ok=store.set(KEY,JSON.stringify({base:EMBS,cfg:C}));
+  hasLocal=ok;if(C.pin)store.set(PINKEY,C.pin,1);
+  dirty=false;applyLook(C);start();
+  stt=ok?{t:'Збережено в цьому браузері ✓',err:false}:{t:'Браузер не дав зберегти. Завантаж HTML',err:true};
+  renderAdmin();
+}
+function exportHTML(){
+  const bad=invalid();
+  if(bad>-1){tab='q';stt={t:`№${bad+1}: заповни текст і обидва варіанти`,err:true};renderAdmin();return}
+  const cfg=norm(clone(D));
+  download(buildHTML(cfg),'fake-chy-fakt.html','text/html');
+  status('HTML завантажено. Заміни ним файл на сайті');
+}
+function download(text,name,type){
+  const u=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));
+  const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),5000);
+}
+$('#admlink').addEventListener('click',openAdmin);
+addEventListener('hashchange',()=>{if(location.hash==='#admin'&&adm.hidden)openAdmin()});
+
+applyLook(C);start();
+if(location.hash==='#admin')openAdmin();
+}
+</script></body></html>
