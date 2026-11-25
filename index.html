@@ -87,6 +87,21 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .cs:before{content:counter(score)}
 .sbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;gap:10px;background:var(--ink);color:var(--bg);font:700 16px var(--bf),sans-serif;padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .sbar i,.score i{font-style:normal}
+/* фото в запитанні */
+.qimg{margin:0 auto 14px;width:var(--iw,100%);max-width:100%}
+.qimg.b{margin:14px auto 0}
+.qimg img{display:block;width:100%;height:var(--ih,auto);object-fit:var(--if,cover);border-radius:calc(var(--r)*.6);background:var(--line)}
+.qimg figcaption{font-size:13px;line-height:1.35;color:var(--mute);margin-top:5px}
+.qimg.later{display:none}
+.qimg.later.on,.sq input:checked ~ .card .qimg.later,.pv .qimg.later{display:block}
+.pv .qimg.later{opacity:.55}
+.card.bgi{color:#fff;min-height:var(--ih,260px);display:flex;flex-direction:column;justify-content:flex-end}
+.card.bgi .bgimg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.card.bgi:before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.2) 75%)}
+.card.bgi .k,.card.bgi .q,.card.bgi .bcap{position:relative;z-index:2}
+.card.bgi .k,.card.bgi .bcap{color:rgba(255,255,255,.8)}
+.card.bgi .bcap{font-size:12px;margin-top:8px}
+.stamp{z-index:3}
 @media (prefers-reduced-motion:reduce){.stamp,.bar i{transition:none}}
 
 /* ---------- адмінка ---------- */
@@ -144,6 +159,8 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .ghd summary{cursor:pointer;font-weight:700}
 .ghd ol{padding-left:20px;margin:10px 0}
 .ghd li{margin:4px 0}
+.pv{background:var(--bg);border-radius:10px;padding:10px;margin-top:4px}
+.pv:before{content:"Попередній перегляд";display:block;font-size:12px;color:var(--mute);margin-bottom:6px}
 .pin{max-width:360px;margin:0 auto;padding:calc(40px + env(safe-area-inset-top)) 20px 40px;display:grid;gap:12px}
 .pin form{display:grid;gap:10px}
 .pin .err{color:var(--red);min-height:1.5em;margin:0}
@@ -281,7 +298,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "7.02.2024 Рада ухвалила в першому читанні загальний законопроєкт про мобілізацію. Норм про мобілізацію жінок у ньому немає, а перше читання ще не робить його законом.",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Скриншот у соцмережах",
@@ -292,7 +318,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Скриншот підроблений, у ньому є мовні помилки («baby»). Бригада це спростувала, ArmyInform і StopFake розібрали фейк (4.02.2026).",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Новина",
@@ -303,7 +338,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 0,
    "w": "Дату перенесено указом №817/2025 від 4.11.2025, це підтвердило командування ДШВ.",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Повідомлення в Telegram",
@@ -314,7 +358,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Центр протидії дезінформації спростував це як російський фейк (червень 2025).",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Підпис у відео",
@@ -325,7 +378,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Передачу даних про працівників до ТЦК регулює Порядок №812, але норми, яка діє саме «з 1 грудня», фактчекер не знайшов.",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Заголовок відео депутата",
@@ -336,7 +398,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Слово «остаточно» і прогноз «вб'є економіку» виражають думку автора. Перевірити таке твердження як факт неможливо.",
-   "s": "Думка"
+   "s": "Думка",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Що означає",
@@ -347,7 +418,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Після першого читання документ доопрацьовують. Законом він стане лише після другого читання, підпису Президента й публікації.",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Психологічний прийом",
@@ -358,7 +438,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 0,
    "w": "Соціальний доказ: людина орієнтується на те, що нібито підтримують інші. Боти штучно створюють таку «більшість».",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Алгоритми",
@@ -369,7 +458,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Алгоритм підбирає звичний контент, і людина перестає бачити інші точки зору. Ефект посилює схильність шукати підтвердження своїм думкам.",
-   "s": ""
+   "s": "",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   },
   {
    "k": "Алгоритм фактчекера",
@@ -380,7 +478,16 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
    ],
    "a": 1,
    "w": "Перший крок алгоритму: стоп. Потім шукаємо першоджерело, звіряємо зі StopFake, VoxCheck, ЦПД, Detector Media, перевіряємо фото й відео.",
-   "s": "Стоп"
+   "s": "Стоп",
+   "img": {
+    "src": "",
+    "pos": "top",
+    "when": "now",
+    "w": 100,
+    "h": 0,
+    "fit": "cover",
+    "cap": ""
+   }
   }
  ]
 }
@@ -404,11 +511,18 @@ const store={get(k,s){try{return(s?sessionStorage:localStorage).getItem(k)}catch
   set(k,v,s){try{(s?sessionStorage:localStorage).setItem(k,v);return true}catch(e){return false}},
   del(k){try{localStorage.removeItem(k)}catch(e){}}};
 
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function normImg(m){
+  m=m&&typeof m==='object'?m:{};
+  return{src:String(m.src??'').trim(),pos:['top','bottom','bg'].includes(m.pos)?m.pos:'top',when:m.when==='after'?'after':'now',
+    w:clamp(+m.w||100,20,100),h:clamp(+m.h||0,0,600),fit:m.fit==='contain'?'contain':'cover',cap:String(m.cap??'')};
+}
+const newImg=()=>normImg({});
 function norm(x){
   x=x&&typeof x==='object'?x:{};
   const c={...DEF,...x};
   for(const k of ['title','sub','foot','pin','btnNext','btnEnd','btnAgain','msgHi','msgMid','msgLo','tipsTitle'])c[k]=String(c[k]??'');
-  c.questions=(Array.isArray(x.questions)?x.questions:[]).map(q=>({k:String(q?.k??''),q:String(q?.q??''),o:[String(q?.o?.[0]??''),String(q?.o?.[1]??'')],a:q?.a==1?1:0,w:String(q?.w??''),s:String(q?.s??'')}));
+  c.questions=(Array.isArray(x.questions)?x.questions:[]).map(q=>({k:String(q?.k??''),q:String(q?.q??''),o:[String(q?.o?.[0]??''),String(q?.o?.[1]??'')],a:q?.a==1?1:0,w:String(q?.w??''),s:String(q?.s??''),img:normImg(q?.img)}));
   const g=x.gh&&typeof x.gh==='object'?x.gh:{};c.gh={};for(const k in DEF.gh)c.gh[k]=String(g[k]??DEF.gh[k]).trim()||DEF.gh[k];
   c.tips=Array.isArray(c.tips)?c.tips.map(String).filter(Boolean):[];
   for(const k of ['accent','ok','bgL','bgD'])if(!hex(c[k]))c[k]=DEF[k];
@@ -447,6 +561,14 @@ function applyLook(c){
   $('#foot').textContent=c.foot;
   $('#admlink').hidden=!c.adminLink;
 }
+/* картка твердження (спільна для тесту, статичної версії та перегляду в адмінці) */
+function cardHTML(it,stamp){
+  const im=it.img||newImg(),has=!!im.src,bg=has&&im.pos==='bg';
+  const sty=`--iw:${im.w}%;--ih:${im.h?im.h+'px':(bg?'260px':'auto')};--if:${im.fit}`;
+  const alt=esc(im.cap||'Ілюстрація до запитання'),src=esc(im.src);
+  const fig=has&&!bg?`<figure class="qimg${im.pos==='bottom'?' b':''}${im.when==='after'?' later':''}" style="${sty}"><img src="${src}" alt="${alt}" loading="lazy" decoding="async">${im.cap?`<figcaption>${esc(im.cap)}</figcaption>`:''}</figure>`:'';
+  return `<div class="card${stamp?'':' ns'}${bg?' bgi':''}"${bg?` style="${sty}"`:''}>${bg?`<img class="bgimg" src="${src}" alt="${alt}" decoding="async">`:''}${im.pos==='top'?fig:''}${it.k?`<div class="k">${esc(it.k)}</div>`:''}<div class="q">${esc(it.q)}</div>${im.pos==='bottom'?fig:''}${bg&&im.cap?`<div class="bcap">${esc(im.cap)}</div>`:''}${stamp}</div>`;
+}
 /* статична версія тесту: працює без JavaScript (CSS-радіокнопки + лічильники) */
 function staticHTML(c){
   const n=c.questions.length;
@@ -455,7 +577,7 @@ function staticHTML(c){
 ${c.questions.map((q,x)=>{const t=q.o[q.a],stp=q.s||(t.length<=16?t:'');return `<section class="sq a${q.a}">
 <input type="radio" name="s${x}" id="s${x}a0" class="i0 ${q.a===0?'c':'w'}"><input type="radio" name="s${x}" id="s${x}a1" class="i1 ${q.a===1?'c':'w'}">
 <div class="meta"><span>Запитання ${x+1} з ${n}</span></div>
-<div class="card${c.stamp&&stp?'':' ns'}">${q.k?`<div class="k">${esc(q.k)}</div>`:''}<div class="q">${esc(q.q)}</div>${c.stamp&&stp?`<div class="stamp">${esc(stp)}</div>`:''}</div>
+${cardHTML(q,c.stamp&&stp?`<div class="stamp">${esc(stp)}</div>`:'')}
 <div class="opts${q.o.some(o=>o.length>22)?' long':''}"><label for="s${x}a0" class="l0">${esc(q.o[0])}</label><label for="s${x}a1" class="l1">${esc(q.o[1])}</label></div>
 <div class="why"><b class="r">Правильно.</b><b class="x">Правильна відповідь: ${esc(t)}.</b>${esc(q.w)}</div>
 </section>`}).join('\n')}
@@ -495,7 +617,7 @@ function show(){
   const long=it.o.some(t=>t.length>22);
   app.innerHTML=`<div class="bar"><i id="bar" style="width:${i/n*100}%"></i></div>
   <div class="meta"><span>Запитання ${i+1} з ${n}</span><span id="sc">Правильно: ${score}</span></div>
-  <div class="card${C.stamp?'':' ns'}">${it.k?`<div class="k">${esc(it.k)}</div>`:''}<div class="q">${esc(it.q)}</div>${C.stamp?'<div class="stamp" id="st" aria-hidden="true"></div>':''}</div>
+  ${cardHTML(it,C.stamp?'<div class="stamp" id="st" aria-hidden="true"></div>':'')}
   <div class="opts${long?' long':''}" role="group" aria-label="Варіанти відповіді">${ord.map(m=>`<button type="button" data-n="${m}">${esc(it.o[m])}</button>`).join('')}</div>
   <div class="why" id="why" aria-live="polite"><b id="vd"></b>${esc(it.w)}</div>
   <button class="go" id="go" type="button" hidden>${esc(i+1<n?C.btnNext:C.btnEnd)}</button>`;
@@ -509,6 +631,7 @@ function pick(n){
   const st=$('#st');
   if(st){const t=it.o[it.a];st.textContent=it.s||(t.length<=16?t:(ok?'Вірно':'Хибно'));st.style.color=ok?'var(--ok)':'var(--red)';st.classList.add('on')}
   $('#vd').textContent=ok?'Правильно.':'Правильна відповідь: '+it.o[it.a]+'.';
+  app.querySelectorAll('.qimg.later').forEach(f=>f.classList.add('on'));
   const w=$('#why');w.classList.add('on');
   const g=$('#go');g.hidden=false;try{g.focus({preventScroll:true})}catch(e){}
   w.scrollIntoView({behavior:motion(),block:'nearest'});
@@ -553,6 +676,19 @@ const CH=(p,l,v)=>`<label class="chk"><input type="checkbox" data-p="${p}"${v?' 
 const NUM=(p,l,v)=>`<label class="fld"><span>${l}</span><input type="number" min="0" max="100" inputmode="numeric" data-p="${p}" value="${esc(v)}"></label>`;
 const COL=(p,l,v)=>`<div class="fld"><span>${l}</span><div class="color"><input type="color" data-p="${p}" value="${v}" aria-label="${l}"><input type="text" data-p="${p}" value="${v}" maxlength="7" spellcheck="false" autocapitalize="off" aria-label="${l}, HEX"></div></div>`;
 const SEL=(p,l,v,o)=>`<label class="fld"><span>${l}</span><select data-p="${p}">${o.map(([a,b])=>`<option value="${esc(a)}"${a===v?' selected':''}>${esc(b)}</option>`).join('')}</select></label>`;
+const RNG=(p,l,v,min,max,step,u,auto)=>`<div class="fld"><span>${l}</span><div class="rng"><input type="range" min="${min}" max="${max}" step="${step}" data-p="${p}" data-unit="${u}"${auto?' data-auto':''} value="${v}" aria-label="${l}"><output>${auto&&!v?'авто':v+' '+u}</output></div></div>`;
+function imgEd(q,x){
+  const im=q.img,p=`questions.${x}.img`,up=im.src.startsWith('data:');
+  return `<div class="fld"><span>Фото</span>
+  <div class="btns" style="margin:0 0 8px"><label class="btn">${im.src?'Замінити фото':'+ Додати фото'}<input type="file" accept="image/*" hidden data-img="${x}"></label>${im.src?`<button type="button" class="btn" data-act="imgdel" data-i="${x}">Прибрати фото</button>`:''}</div>
+  ${up?'':T(`${p}.src`,'або посилання на зображення',im.src,'placeholder="https://…" inputmode="url" autocapitalize="off" spellcheck="false"')}
+  ${im.src?`<div class="row2">${SEL(`${p}.pos`,'Розташування',im.pos,[['top','Над текстом'],['bottom','Під текстом'],['bg','Фоном картки']])}${SEL(`${p}.when`,'Коли показувати',im.when,[['now','Одразу'],['after','Після відповіді']])}</div>
+  <div class="row2">${RNG(`${p}.w`,'Ширина',im.w,20,100,5,'%')}${RNG(`${p}.h`,'Висота',im.h,0,600,10,'px',1)}</div>
+  ${SEL(`${p}.fit`,'Як вписати у висоту',im.fit,[['cover','Заповнити (з обрізкою країв)'],['contain','Показати повністю']])}
+  ${T(`${p}.cap`,'Підпис або джерело (необовʼязково)',im.cap)}
+  <p class="hint">Висота «авто» показує фото в природних пропорціях. Для фону картки ширина й «після відповіді» не діють.</p>
+  <div class="pv" id="pv${x}">${cardHTML(q,'')}</div>`:''}</div>`;
+}
 const fontOpts=Object.keys(FONTS).map(f=>[f,f]);
 
 function qHTML(q,x,n){
@@ -566,6 +702,7 @@ function qHTML(q,x,n){
   <div class="fld"><span>Два варіанти відповіді (познач правильний)</span>
   ${[0,1].map(m=>`<div class="optrow"><label class="rad"><input type="radio" name="a${x}" value="${m}" data-p="questions.${x}.a"${q.a===m?' checked':''}>Правильна</label><input type="text" data-p="questions.${x}.o.${m}" value="${esc(q.o[m])}" placeholder="Варіант ${m+1}" aria-label="Варіант ${m+1}"></div>`).join('')}
   <div class="presets">${PRESETS.map(([a,b])=>`<button type="button" class="chip" data-act="preset" data-i="${x}" data-v="${esc(a+'|'+b)}">${esc(a)} / ${esc(b)}</button>`).join('')}</div></div>
+  ${imgEd(q,x)}
   ${TA(`questions.${x}.w`,'Пояснення фактчекера',q.w,'rows="3"')}
   ${T(`questions.${x}.s`,'Текст штампа (порожньо = правильна відповідь)',q.s,'maxlength="20"')}
   </div>`;
@@ -578,7 +715,7 @@ function body(){
   ${SEL('theme','Тема',D.theme,[['auto','Як на пристрої'],['light','Завжди світла'],['dark','Завжди темна']])}
   <div class="row2">${COL('accent','Акцентний колір',D.accent)}${COL('ok','Колір правильної відповіді',D.ok)}</div>
   <div class="row2">${COL('bgL','Фон у світлій темі',D.bgL)}${COL('bgD','Фон у темній темі',D.bgD)}</div>
-  <div class="fld"><span>Заокруглення кутів</span><div class="rng"><input type="range" min="0" max="28" step="1" data-p="radius" value="${D.radius}" aria-label="Заокруглення кутів"><output>${D.radius} px</output></div></div>
+  ${RNG('radius','Заокруглення кутів',D.radius,0,28,1,'px')}
   <div class="row2">${SEL('hf','Шрифт заголовків',D.hf,fontOpts)}${SEL('bf','Шрифт тексту',D.bf,fontOpts)}</div>
   <h3>Поведінка</h3>
   ${CH('stamp','Ставити штамп на картку після відповіді',D.stamp)}
@@ -631,6 +768,7 @@ function renderAdmin(top){
   <div class="af"><button type="button" class="btn" data-act="close">${dirty?'Закрити':'До тесту'}</button><button type="button" class="btn pri" data-act="save">Зберегти</button></div>`;
   adm.scrollTop=top?0:sy;
 }
+const normImgQ=q=>({...q,img:normImg(q.img)});
 function setP(o,p,v){const ks=p.split('.');let t=o;for(let k=0;k<ks.length-1;k++)t=t[ks[k]];t[ks[ks.length-1]]=v}
 function changed(msg){dirty=true;stt={t:msg||'Є незбережені зміни',err:false}}
 function onField(e){
@@ -641,13 +779,22 @@ function onField(e){
     const okc=hex(v);el.classList.toggle('bad',!okc);if(!okc)return;
     adm.querySelectorAll(`[data-p="${p}"]`).forEach(o=>{if(o!==el){o.value=v;o.classList.remove('bad')}});
   }
-  if(el.type==='range')el.nextElementSibling.textContent=v+' px';
+  if(el.type==='range')el.nextElementSibling.textContent=el.hasAttribute('data-auto')&&!v?'авто':v+' '+el.dataset.unit;
   setP(D,p,v);changed();status(stt.t);
   const cb=adm.querySelector('[data-act=close]');if(cb&&!cb.dataset.sure)cb.textContent='Закрити';
   if(LOOK.includes(p))applyLook(norm(D));
+  const qm=p.match(/^questions\.(\d+)\./);if(qm){const pv=$('#pv'+qm[1]);if(pv)pv.innerHTML=cardHTML(normImgQ(D.questions[qm[1]]),'')}
 }
 adm.addEventListener('input',onField);
 adm.addEventListener('change',e=>{
+  if(e.target.dataset.img!=null){
+    const x=+e.target.dataset.img,f=e.target.files[0];if(!f)return;
+    status('Обробляю фото…');
+    compress(f).then(d=>{D.questions[x].img.src=d;changed('Фото додано');renderAdmin();$('#pv'+x)?.scrollIntoView({behavior:motion(),block:'nearest'})})
+      .catch(()=>status('Не вдалося відкрити це зображення',true));
+    return;
+  }
+  if(/\.img\.src$/.test(e.target.dataset.p||'')){onField(e);D.questions[+e.target.dataset.p.split('.')[1]].img.src=e.target.value.trim();renderAdmin();return}
   if(e.target.id==='impf'){
     const f=e.target.files[0];if(!f)return;
     f.text().then(t=>{D=norm(JSON.parse(t));changed('Імпортовано. Натисни «Зберегти»');applyLook(D);renderAdmin(true)}).catch(()=>status('Не вдалося прочитати файл',true));
@@ -667,7 +814,7 @@ adm.addEventListener('click',e=>{
   switch(a){
     case 'tab':tab=b.dataset.v;renderAdmin(true);break;
     case 'add':{
-      Qs.push({k:'',q:'',o:['Факт','Фейк'],a:0,w:'',s:''});changed();renderAdmin();
+      Qs.push({k:'',q:'',o:['Факт','Фейк'],a:0,w:'',s:'',img:newImg()});changed();renderAdmin();
       const el=$('#qe'+(Qs.length-1));el.scrollIntoView({behavior:motion(),block:'center'});$('textarea',el).focus({preventScroll:true});break}
     case 'up':if(x>0){[Qs[x-1],Qs[x]]=[Qs[x],Qs[x-1]];changed();renderAdmin()}break;
     case 'down':if(x<Qs.length-1){[Qs[x+1],Qs[x]]=[Qs[x],Qs[x+1]];changed();renderAdmin()}break;
@@ -681,6 +828,7 @@ adm.addEventListener('click',e=>{
       closeAdmin();break;
     case 'exphtml':exportHTML();break;
     case 'publish':publish(b);break;
+    case 'imgdel':Qs[x].img=newImg();changed('Фото прибрано');renderAdmin();break;
     case 'expjson':download(JSON.stringify(norm(clone(D)),null,2),'fake-chy-fakt.json','application/json');status('JSON завантажено');break;
     case 'drop':store.del(KEY);hasLocal=false;C=EMB;D=clone(C);dirty=false;applyLook(C);start();stt={t:'Чернетку відкинуто',err:false};renderAdmin();break;
   }
@@ -696,6 +844,15 @@ function save(){
   stt=ok?{t:'Збережено в цьому браузері ✓',err:false}:{t:'Браузер не дав зберегти. Завантаж HTML',err:true};
   renderAdmin();
 }
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);res(im)};im.onerror=()=>{URL.revokeObjectURL(u);rej()};im.src=u})}
+async function compress(file){
+  const im=await loadImg(file),M=1400,k=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight));
+  const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(im.naturalWidth*k));cv.height=Math.max(1,Math.round(im.naturalHeight*k));
+  const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);g.drawImage(im,0,0,cv.width,cv.height);
+  return cv.toDataURL('image/jpeg',.82);
+}
+const fnv=s=>{let h=0x811c9dc5;for(let k=0;k<s.length;k++){h^=s.charCodeAt(k);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,'0')+s.length.toString(36)};
+const siteBase=g=>{const o=g.owner.toLowerCase();return g.repo.toLowerCase()===o+'.github.io'?`https://${o}.github.io/`:`https://${o}.github.io/${g.repo}/`};
 const b64=s=>{const u=new TextEncoder().encode(s);let r='';for(let k=0;k<u.length;k+=0x8000)r+=String.fromCharCode.apply(null,u.subarray(k,k+0x8000));return btoa(r)};
 async function publish(btn){
   const bad=invalid();
@@ -709,6 +866,17 @@ async function publish(btn){
   btn.disabled=true;btn.textContent='Публікую…';status('Публікую…');
   let msg='',ok=false;
   try{
+    const root=`https://api.github.com/repos/${encodeURIComponent(g.owner)}/${encodeURIComponent(g.repo)}/contents/`;
+    for(const q of cfg.questions){
+      const m=q.img.src.match(/^data:image\/(\w+);base64,(.+)$/);if(!m)continue;
+      const path=`img/${fnv(m[2])}.${m[1]==='jpeg'?'jpg':m[1]}`;
+      status('Завантажую фото…');
+      const c=await fetch(root+path+'?ref='+encodeURIComponent(g.branch),{headers:H,cache:'no-store'});
+      if(c.status===404){const w=await fetch(root+path,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({message:'Фото для тесту',content:m[2],branch:g.branch})});if(!w.ok&&w.status!==422)throw w}
+      else if(!c.ok)throw c;
+      q.img.src=siteBase(g)+path;
+    }
+    status('Публікую…');
     const content=b64(buildHTML(cfg));
     for(let t=0;t<2&&!ok;t++){
       let sha;
@@ -722,7 +890,7 @@ async function publish(btn){
     msg=st===401?'Токен невірний або прострочений':st===403?'Токену бракує права Contents: Read and write':st===404?'Репозиторій не знайдено або токен не має до нього доступу':st?'Помилка GitHub '+st:'Немає зʼєднання з GitHub';
   }
   if(ok){
-    C=cfg;hasLocal=store.set(KEY,JSON.stringify({base:EMBS,cfg:C}));if(C.pin)store.set(PINKEY,C.pin,1);
+    C=cfg;D=clone(C);hasLocal=store.set(KEY,JSON.stringify({base:EMBS,cfg:C}));if(C.pin)store.set(PINKEY,C.pin,1);
     dirty=false;pub=true;applyLook(C);start();
     stt={t:'Опубліковано ✓ Сайт оновиться за 1–2 хв',err:false};
   }else stt={t:msg,err:true};
