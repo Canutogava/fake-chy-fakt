@@ -185,6 +185,7 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .sprog i{display:block;height:100%;background:var(--red)}
 .badge.act{background:var(--red);color:#fff}
 .sum .sact b{color:var(--red)}
+.btn.danger{color:var(--red);border-color:var(--red)}
 .btn.live .dot{width:10px;height:10px;border-radius:50%;background:var(--line);display:inline-block}
 .btn.live.on{border-color:var(--red);color:var(--red)}
 .btn.live.on .dot{background:var(--red);animation:pulse 1.4s infinite}
@@ -646,7 +647,7 @@ function buildHTML(cfg){
 }
 
 /* ---------- статистика (Google Apps Script) ---------- */
-const ST={sid:'',name:'',log:[],prof:{device:'',browser:'',screen:''},ip:'',started:false};
+const ST={sid:'',t0:0,name:'',log:[],done:0,score:0,finished:false,prof:{device:'',browser:'',screen:''},ip:'',started:false};
 const uid=()=>(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
 function profile(){
   const ua=navigator.userAgent;let dev='Інше',os='',br='';
@@ -663,12 +664,47 @@ function getIP(){
   const ac=new AbortController();setTimeout(()=>ac.abort(),5000);
   fetch('https://api.ipify.org?format=json',{signal:ac.signal,cache:'no-store'}).then(r=>r.json()).then(d=>{ST.ip=String(d.ip||'');if(ST.started)send('ip')}).catch(()=>{});
 }
+/* Надійна доставка: кожна подія — повний знімок стану сесії (ідемпотентно).
+   Для кожної сесії тримаємо лише останній знімок; він зберігається в localStorage
+   і досилається з повторами (експоненційна пауза), навіть після перезавантаження сторінки. */
+const OUTKEY='fcq-outbox-v1';
+const OB={q:{},busy:false,timer:0,fails:0};
+try{const o=JSON.parse(localStorage.getItem(OUTKEY)||'{}');if(o&&typeof o==='object')for(const k in o)if(o[k]&&o[k].url&&o[k].body&&Date.now()-(o[k].at||0)<3*864e5)OB.q[k]=o[k]}catch(e){}
+const obSave=()=>{try{localStorage.setItem(OUTKEY,JSON.stringify(OB.q))}catch(e){}};
 function send(type,extra){
   if(!C.stats.url||!ST.sid)return;
-  const body=JSON.stringify({type,sid:ST.sid,name:ST.name,...ST.prof,ip:C.stats.ip?ST.ip:'',total:order.length,log:ST.log.join(' '),...extra});
-  try{fetch(C.stats.url,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body}).catch(()=>{})}catch(e){}
+  const body=JSON.stringify({sid:ST.sid,t0:ST.t0,name:ST.name,...ST.prof,ip:C.stats.ip?ST.ip:'',total:order.length,log:ST.log.join(' '),done:ST.done,score:ST.score,finished:ST.finished,...extra,type});
+  OB.q[ST.sid]={url:C.stats.url,body,seq:(OB.q[ST.sid]?.seq||0)+1,at:Date.now()};
+  obSave();OB.fails=0;flush();
 }
-function newSession(){ST.sid=uid();ST.log=[];ST.started=true;send('start',{done:0,score:0})}
+async function flush(){
+  if(OB.busy)return;
+  const sid=Object.keys(OB.q)[0];if(!sid)return;
+  if(navigator.onLine===false){retry();return}
+  const it=OB.q[sid],seq=it.seq;OB.busy=true;clearTimeout(OB.timer);
+  let ok=false;
+  try{
+    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),15000);
+    const r=await fetch(it.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:it.body,signal:ac.signal,redirect:'follow'});
+    clearTimeout(to);
+    const d=await r.json().catch(()=>null);
+    ok=!!(d&&(d.ok||d.error==='sid'||d.error==='json')); // погані дані не повторюємо
+  }catch(e){
+    // відповідь не прочиталась (напр. CORS у вбудованому браузері) — пробуємо «наосліп» один раз
+    if(e&&e.name!=='AbortError'&&navigator.onLine!==false&&!it.blind){
+      try{await fetch(it.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:it.body});it.blind=true;ok=true}catch(_){}
+    }
+  }
+  OB.busy=false;
+  if(ok){if(OB.q[sid]&&OB.q[sid].seq===seq)delete OB.q[sid];OB.fails=0;obSave();if(Object.keys(OB.q).length)flush()}
+  else retry();
+}
+function retry(){clearTimeout(OB.timer);OB.fails++;OB.timer=setTimeout(flush,Math.min(60000,1500*2**Math.min(OB.fails,6))+Math.random()*800)}
+addEventListener('online',()=>{OB.fails=0;flush()});
+addEventListener('pagehide',()=>{for(const k in OB.q){try{navigator.sendBeacon&&navigator.sendBeacon(OB.q[k].url,new Blob([OB.q[k].body],{type:'text/plain;charset=utf-8'}))}catch(e){}}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)flush()});
+function newSession(){Object.assign(ST,{sid:uid(),t0:Date.now(),log:[],done:0,score:0,finished:false,started:true});send('start')}
+setTimeout(flush,1500);
 
 /* ---------- тест ---------- */
 const app=$('#app');
@@ -711,7 +747,7 @@ function pick(n){
   const it=C.questions[order[i]],ok=n===it.a;
   app.querySelectorAll('.opts button').forEach(b=>{const k=+b.dataset.n;b.disabled=true;if(k===it.a)b.classList.add('right');else if(k===n)b.classList.add('wrong')});
   if(ok)score++;
-  ST.log.push((order[i]+1)+(ok?'✓':'✗'));send('answer',{done:i+1,score});
+  ST.log.push((order[i]+1)+(ok?'✓':'✗'));ST.done=i+1;ST.score=score;send('answer');
   $('#sc').textContent='Правильно: '+score;
   $('#bar').style.width=(i+1)/order.length*100+'%';
   const st=$('#st');
@@ -729,7 +765,7 @@ function next(){
 function end(){
   const n=order.length,p=score/n*100;
   const m=p>=C.hi?C.msgHi:p>=C.mid?C.msgMid:C.msgLo;
-  send('finish',{done:n,score});
+  ST.done=n;ST.score=score;ST.finished=true;send('finish');
   app.innerHTML=`<div class="end"><div class="bar"><i style="width:100%"></i></div>
   <div class="score">${score}/${n}</div>${m?`<p><b>${esc(m)}</b></p>`:''}
   ${C.tips.length?`<div class="tips"><b>${esc(C.tipsTitle)}</b><ol>${C.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>`:''}
@@ -777,7 +813,7 @@ function imgEd(q,x){
   <p class="hint">Висота «авто» показує фото в природних пропорціях. Для фону картки ширина й «після відповіді» не діють.</p>
   <div class="pv" id="pv${x}">${cardHTML(q,'')}</div>`:''}</div>`;
 }
-let SD=null,sFilter='all',sQuery='',sBusy=false,sLive=true,sTimer=0,sPrev={},sFresh=new Set(),sAt=0;
+let SD=null,sFilter='all',sQuery='',sBusy=false,sLive=true,sTimer=0,sPrev={},sFresh=new Set(),sAt=0,sSkew=0,sErr=0,sErrMsg='',sClearArm=false;
 const LIVE_MS=5000,ACTIVE_MS=3*60e3;
 function statsTab(){
   const u=D.stats.url,okU=!u||/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(u);
@@ -789,6 +825,8 @@ function statsTab(){
   <div class="seg">${[['all','Усі'],['act','Проходять зараз'],['fin','Завершені'],['no','Не завершені']].map(([k,l])=>`<button type="button" data-act="sfilt" data-v="${k}" aria-pressed="${sFilter===k}">${l}</button>`).join('')}</div>
   <label class="fld"><span>Пошук за імʼям або IP</span><input type="text" id="sq" value="${esc(sQuery)}"></label>
   <div id="sres">${statsView()}</div>
+  ${SD?`<div class="btns"><button type="button" class="btn danger" data-act="sclear">${sClearArm?'Точно видалити всі записи? Натисни ще раз':'Очистити статистику'}</button>${sClearArm?'<button type="button" class="btn" data-act="sclearno">Скасувати</button>':''}</div>
+  <p class="hint">Очищай тут, а не вручну в таблиці: так безпечно навіть під час проходження тесту.</p>`:''}
   <h3>Налаштування збору</h3>
   ${T('stats.url','Адреса веб-застосунку Google Apps Script',u,'placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocapitalize="off" spellcheck="false"')}
   ${okU?'':'<p class="hint" style="color:var(--red)">Адреса має виглядати як https://script.google.com/macros/s/…/exec</p>'}
@@ -799,15 +837,19 @@ function statsTab(){
   ${TA('stats.notice','Попередження для учнів (під кнопкою «Почати»)',D.stats.notice,'rows="3"')}`;
 }
 const fdt=v=>{const d=new Date(v);return isNaN(d)?(v||''):d.toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};
-const ago=v=>{const t=Date.now()-new Date(v);if(isNaN(t))return'';const m=Math.round(t/60e3);return m<1?'щойно':m<60?m+' хв тому':Math.round(m/60)+' год тому'};
+const ago=v=>{const t=srvNow()-new Date(v);if(isNaN(t))return'';const m=Math.round(t/60e3);return m<1?'щойно':m<60?m+' хв тому':Math.round(m/60)+' год тому'};
 const rKey=r=>r.id||(r.start+'|'+r.name);
 const isFin=r=>r.status==='Завершено';
-const isAct=r=>!isFin(r)&&r.last&&Date.now()-new Date(r.last)<ACTIVE_MS;
+const srvNow=()=>Date.now()+sSkew;
+const isAct=r=>!isFin(r)&&r.last&&srvNow()-new Date(r.last)<ACTIVE_MS;
 function sInfo(){
-  if(!SD)return 'Встав ключ і натисни «Завантажити статистику».';
+  if(!SD)return sErrMsg||'Встав ключ і натисни «Завантажити статистику».';
   const t=new Date(sAt).toLocaleTimeString('uk-UA');
+  if(sErr)return `⚠ ${sErrMsg} Дані на ${t}. ${sLive?'Повторюю автоматично…':''}`;
   return sLive?`Лайв: оновлюється кожні ${LIVE_MS/1000} с · востаннє о ${t}`:`Оновлено о ${t} · лайв вимкнено`;
 }
+const normRow=r=>{r=r&&typeof r==='object'?r:{};const n=v=>{v=Number(v);return isFinite(v)?v:0};const t=v=>v==null?'':String(v);
+  return{id:t(r.id),start:t(r.start),last:t(r.last),end:t(r.end),name:t(r.name),status:t(r.status)||'Не завершено',done:n(r.done),score:n(r.score),total:n(r.total),mins:r.mins===''||r.mins==null?'':n(r.mins),device:t(r.device),browser:t(r.browser),screen:t(r.screen),ip:t(r.ip),log:t(r.log)}};
 function statsView(){
   if(!SD)return '';
   const rows=SD.rows.slice().reverse(),fin=rows.filter(isFin),act=rows.filter(isAct);
@@ -823,30 +865,55 @@ function statsView(){
   ${r.log?`<div class="slog">${esc(r.log)}</div>`:''}</div>`}).join(''):'<p class="hint">Нічого не знайдено.</p>'}</div>`;
 }
 function sPaint(){const r=$('#sres');if(r)r.innerHTML=statsView();const i=$('#sinfo');if(i)i.textContent=sInfo()}
+async function sFetch(u,opt){
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
+  try{const r=await fetch(u,{...opt,signal:ac.signal,cache:'no-store',redirect:'follow'});if(!r.ok){const e=new Error('http');e.http=r.status;throw e}return await r.json()}
+  finally{clearTimeout(to)}
+}
 async function loadStats(quiet){
   const kEl=$('#stkey'),key=((kEl&&kEl.value)||store.get(SKEY)||'').trim(),u=((D&&D.stats.url)||C.stats.url).trim();
   if(!u){if(!quiet)status('Спершу вкажи адресу Apps Script нижче',true);return}
   if(!key){if(!quiet){status('Встав ключ перегляду',true);kEl&&kEl.focus()}return}
-  store.set(SKEY,key);sBusy=true;
+  if(sBusy)return;
+  store.set(SKEY,key);sBusy=true;clearTimeout(sTimer);
+  const t1=Date.now();
   try{
-    const r=await fetch(u+'?key='+encodeURIComponent(key)+'&t='+Date.now(),{cache:'no-store'});
-    const d=await r.json();
-    if(!d.ok){status(d.error==='key'?'Невірний ключ перегляду':'Помилка таблиці',true);sLive=false}
-    else{
-      const first=!SD;sFresh=new Set();
-      for(const x of d.rows){const k=rKey(x),sig=x.done+'|'+x.status+'|'+x.score;if(!first&&sPrev[k]!==sig)sFresh.add(k);sPrev[k]=sig}
-      SD=d;sAt=Date.now();
-      if(first){if(tab==='stats')renderAdmin()}else sPaint();
-      if(!quiet)status('Завантажено: '+d.rows.length);
+    const d=await sFetch(u+'?key='+encodeURIComponent(key)+'&t='+t1);
+    if(!d||typeof d!=='object')throw new Error('bad');
+    if(!d.ok){
+      if(d.error==='key'){sLive=false;sErr=1;sErrMsg='Невірний ключ перегляду.';status('Невірний ключ перегляду',true)}
+      else{sErr++;sErrMsg='Таблиця тимчасово недоступна.'}
+    }else{
+      const rows=Array.isArray(d.rows)?d.rows.map(normRow):[];
+      if(isFinite(d.now))sSkew=d.now-(t1+Date.now())/2;
+      const first=!SD;sFresh=new Set();const seen={};
+      for(const x of rows){const k=rKey(x),sig=x.done+'|'+x.status+'|'+x.score+'|'+x.name;seen[k]=sig;if(!first&&sPrev[k]!==sig)sFresh.add(k)}
+      sPrev=seen;SD={...d,rows};sAt=Date.now();sErr=0;sErrMsg='';
+      if(first&&tab==='stats'){renderAdmin()}
+      if(!quiet)status('Завантажено: '+rows.length);
     }
-  }catch(e){if(!quiet)status('Не вдалося отримати дані. Перевір адресу й доступ «Усі» у Apps Script',true)}
-  sBusy=false;schedule();
+  }catch(e){sErr++;sErrMsg=e&&e.name==='AbortError'?'Сервер не відповів вчасно.':e&&e.http?'Сервер Google тимчасово недоступний.':navigator.onLine===false?'Немає інтернету.':'Немає звʼязку з таблицею.';if(!quiet&&!SD)status(sErrMsg,true)}
+  sBusy=false;sPaint();schedule();
 }
 function schedule(){
   clearTimeout(sTimer);
-  if(sLive&&SD&&!adm.hidden&&tab==='stats')sTimer=setTimeout(()=>{if(document.hidden){schedule();return}if(!sBusy)loadStats(true)},LIVE_MS);
+  if(!(sLive&&SD&&!adm.hidden&&tab==='stats'))return;
+  const wait=sErr?Math.min(30000,LIVE_MS*sErr):LIVE_MS;
+  sTimer=setTimeout(()=>{if(document.hidden){schedule();return}loadStats(true)},wait);
+}
+async function clearStats(btn){
+  const key=(($('#stkey')||{}).value||store.get(SKEY)||'').trim(),u=((D&&D.stats.url)||C.stats.url).trim();
+  if(!u||!key){status('Потрібні адреса й ключ',true);return}
+  btn.disabled=true;btn.textContent='Очищую…';
+  try{
+    const d=await sFetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'clear',key})});
+    if(d&&d.ok){SD=SD?{...SD,rows:[]}:SD;sPrev={};status('Статистику очищено ✓')}
+    else status(d&&d.error==='key'?'Невірний ключ':'Не вдалося очистити, спробуй ще раз',true);
+  }catch(e){status('Немає звʼязку з таблицею',true)}
+  sClearArm=false;renderAdmin();loadStats(true);
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sLive&&SD&&!adm.hidden&&tab==='stats'&&!sBusy)loadStats(true)});
+addEventListener('online',()=>{if(sLive&&SD&&!adm.hidden&&tab==='stats'){sErr=0;loadStats(true)}});
 const fontOpts=Object.keys(FONTS).map(f=>[f,f]);
 
 function qHTML(q,x,n){
@@ -974,7 +1041,7 @@ adm.addEventListener('click',e=>{
   const a=b.dataset.act,x=+b.dataset.i,Qs=D&&D.questions;
   if(a!=='del')armed=null;
   switch(a){
-    case 'tab':tab=b.dataset.v;renderAdmin(true);if(tab==='stats'&&SD&&!sBusy)loadStats(true);else schedule();break;
+    case 'tab':tab=b.dataset.v;sClearArm=false;renderAdmin(true);if(tab==='stats'&&SD&&!sBusy)loadStats(true);else schedule();break;
     case 'add':{
       Qs.push({k:'',q:'',o:['Факт','Фейк'],a:0,w:'',s:'',img:newImg()});changed();renderAdmin();
       const el=$('#qe'+(Qs.length-1));el.scrollIntoView({behavior:motion(),block:'center'});$('textarea',el).focus({preventScroll:true});break}
@@ -990,7 +1057,9 @@ adm.addEventListener('click',e=>{
       closeAdmin();break;
     case 'exphtml':exportHTML();break;
     case 'publish':publish(b);break;
-    case 'sload':if(!sBusy)loadStats();break;
+    case 'sload':if(!sBusy){sErr=0;loadStats()}break;
+    case 'sclear':if(sClearArm)clearStats(b);else{sClearArm=true;renderAdmin()}break;
+    case 'sclearno':sClearArm=false;renderAdmin();break;
     case 'slive':sLive=!sLive;b.classList.toggle('on',sLive);b.setAttribute('aria-pressed',sLive);sPaint();if(sLive&&!sBusy&&SD)loadStats(true);else schedule();break;
     case 'sfilt':sFilter=b.dataset.v;adm.querySelectorAll('[data-act=sfilt]').forEach(x=>x.setAttribute('aria-pressed',x===b));sPaint();break;
     case 'imgdel':Qs[x].img=newImg();changed('Фото прибрано');renderAdmin();break;
