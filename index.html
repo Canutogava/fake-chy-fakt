@@ -87,6 +87,14 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .cs:before{content:counter(score)}
 .sbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;gap:10px;background:var(--ink);color:var(--bg);font:700 16px var(--bf),sans-serif;padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .sbar i,.score i{font-style:normal}
+/* екран імені */
+.intro{background:var(--card);border-radius:var(--r);padding:20px 18px}
+.intro .fld{display:block;margin:0}
+.intro .fld span{display:block;font-weight:700;margin-bottom:8px}
+.intro input{width:100%;font:18px/1.3 var(--bf),system-ui,sans-serif;color:inherit;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:14px}
+.intro input:focus{outline:none;border-color:var(--red)}
+.intro .err{color:var(--red);min-height:1.4em;margin:6px 0;font-size:15px}
+.intro .notice{font-size:13px;line-height:1.4;color:var(--mute);margin:12px 0 0}
 /* фото в запитанні */
 .qimg{margin:0 auto 14px;width:var(--iw,100%);max-width:100%}
 .qimg.b{margin:14px auto 0}
@@ -161,6 +169,21 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 .ghd li{margin:4px 0}
 .pv{background:var(--bg);border-radius:10px;padding:10px;margin-top:4px}
 .pv:before{content:"Попередній перегляд";display:block;font-size:12px;color:var(--mute);margin-bottom:6px}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+@media (max-width:520px){.sum{grid-template-columns:1fr 1fr}}
+.sum div{background:var(--card);border-radius:10px;padding:10px 12px}
+.sum b{display:block;font:800 26px/1.1 var(--hf),sans-serif}
+.sum span{font-size:13px;color:var(--mute)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.seg button{border:2px solid var(--line);background:var(--bg);color:inherit;border-radius:99px;padding:7px 14px;font:700 14px var(--bf),sans-serif;cursor:pointer}
+.seg button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.srow{border-bottom:1px solid var(--line);padding:10px 0}
+.srow-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.srow-h b{font-size:17px;overflow-wrap:anywhere}
+.badge{flex:none;font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;background:var(--okT);color:var(--ok)}
+.badge.no{background:var(--redT);color:var(--red)}
+.smeta{font-size:13px;color:var(--mute);margin-top:2px;overflow-wrap:anywhere}
+.slog{font-size:13px;margin-top:3px;letter-spacing:.02em;overflow-wrap:anywhere}
 .pin{max-width:360px;margin:0 auto;padding:calc(40px + env(safe-area-inset-top)) 20px 40px;display:grid;gap:12px}
 .pin form{display:grid;gap:10px}
 .pin .err{color:var(--red);min-height:1.5em;margin:0}
@@ -282,6 +305,13 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
   "Перевір фото й відео: дата, місце, зворотний пошук.",
   "Винеси вердикт і запиши дату перевірки."
  ],
+ "stats": {
+  "url": "",
+  "askName": true,
+  "nameReq": true,
+  "ip": true,
+  "notice": "Твоє імʼя, результат і технічні дані (пристрій, браузер, IP-адреса) записуються лише для статистики шкільного проєкту."
+ },
  "gh": {
   "owner": "Canutogava",
   "repo": "fake-chy-fakt",
@@ -495,9 +525,9 @@ footer.small{font-size:14px;color:var(--mute);margin-top:22px;display:flex;flex-
 
 <script>
 {
-const KEY='fcq-config-v2',PINKEY='fcq-pin-ok',TOKKEY='fcq-gh-token';
+const NAMEKEY='fcq-name',SKEY='fcq-stats-key',KEY='fcq-config-v2',PINKEY='fcq-pin-ok',TOKKEY='fcq-gh-token';
 const FONTS={"Sofia Sans Condensed":"400;500;700;800;900","Sofia Sans":"400;500;700;800;900","Montserrat":"400;500;700;800;900","Rubik":"400;500;700;800;900","Unbounded":"400;500;700;800;900","Nunito":"400;500;700;800;900","Inter":"400;500;700;800;900","Roboto Condensed":"400;500;700;800;900","Oswald":"400;500;700","PT Sans":"400;700"};
-const DEF={title:"Фейк *чи* факт?",sub:"",foot:"",theme:"auto",accent:"#ff4a1c",ok:"#0f7a3d",bgL:"#ffffff",bgD:"#120d0b",radius:14,hf:"Sofia Sans Condensed",bf:"Sofia Sans",stamp:true,shuffleQ:false,shuffleO:false,adminLink:true,pin:"1234",btnNext:"Далі",btnEnd:"Мій результат",btnAgain:"Пройти ще раз",hi:90,msgHi:"",mid:60,msgMid:"",msgLo:"",tipsTitle:"Алгоритм перевірки",tips:[],gh:{owner:"Canutogava",repo:"fake-chy-fakt",branch:"main",path:"index.html"},questions:[]};
+const DEF={title:"Фейк *чи* факт?",sub:"",foot:"",theme:"auto",accent:"#ff4a1c",ok:"#0f7a3d",bgL:"#ffffff",bgD:"#120d0b",radius:14,hf:"Sofia Sans Condensed",bf:"Sofia Sans",stamp:true,shuffleQ:false,shuffleO:false,adminLink:true,pin:"1234",btnNext:"Далі",btnEnd:"Мій результат",btnAgain:"Пройти ще раз",hi:90,msgHi:"",mid:60,msgMid:"",msgLo:"",tipsTitle:"Алгоритм перевірки",tips:[],stats:{url:"",askName:true,nameReq:true,ip:true,notice:"Твоє імʼя, результат і технічні дані (пристрій, браузер, IP-адреса) записуються лише для статистики шкільного проєкту."},gh:{owner:"Canutogava",repo:"fake-chy-fakt",branch:"main",path:"index.html"},questions:[]};
 const LOOK=['theme','accent','ok','bgL','bgD','radius','hf','bf'];
 const PRESETS=[["Факт","Фейк"],["Факт","Маніпуляція"],["Підтверджено","Не підтверджено"],["Так","Ні"]];
 const $=(s,r=document)=>r.querySelector(s);
@@ -524,6 +554,9 @@ function norm(x){
   for(const k of ['title','sub','foot','pin','btnNext','btnEnd','btnAgain','msgHi','msgMid','msgLo','tipsTitle'])c[k]=String(c[k]??'');
   c.questions=(Array.isArray(x.questions)?x.questions:[]).map(q=>({k:String(q?.k??''),q:String(q?.q??''),o:[String(q?.o?.[0]??''),String(q?.o?.[1]??'')],a:q?.a==1?1:0,w:String(q?.w??''),s:String(q?.s??''),img:normImg(q?.img)}));
   const g=x.gh&&typeof x.gh==='object'?x.gh:{};c.gh={};for(const k in DEF.gh)c.gh[k]=String(g[k]??DEF.gh[k]).trim()||DEF.gh[k];
+  const st=x.stats&&typeof x.stats==='object'?x.stats:{};
+  c.stats={url:String(st.url??'').trim(),askName:st.askName??true,nameReq:st.nameReq??true,ip:st.ip??true,notice:String(st.notice??DEF.stats.notice)};
+  for(const k of ['askName','nameReq','ip'])c.stats[k]=!!c.stats[k];
   c.tips=Array.isArray(c.tips)?c.tips.map(String).filter(Boolean):[];
   for(const k of ['accent','ok','bgL','bgD'])if(!hex(c[k]))c[k]=DEF[k];
   if(!FONTS[c.hf])c.hf=DEF.hf;if(!FONTS[c.bf])c.bf=DEF.bf;
@@ -601,6 +634,31 @@ function buildHTML(cfg){
   return '<!DOCTYPE html>\n'+R.outerHTML;
 }
 
+/* ---------- статистика (Google Apps Script) ---------- */
+const ST={sid:'',name:'',log:[],prof:{device:'',browser:'',screen:''},ip:'',started:false};
+const uid=()=>(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+function profile(){
+  const ua=navigator.userAgent;let dev='Інше',os='',br='';
+  if(/iPhone/.test(ua))dev='iPhone';else if(/iPad/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))dev='iPad';
+  else if(/Android/.test(ua)){const m=ua.match(/Android [\d.]+; (?:[a-z]{2}[-_][a-z]{2}; )?([^;)]+?)(?: Build|\))/i);dev='Android'+(m&&m[1]!=='K'?' · '+m[1].trim():'')}
+  else if(/Windows/.test(ua))dev='Windows ПК';else if(/Macintosh/.test(ua))dev='Mac';else if(/CrOS/.test(ua))dev='Chromebook';else if(/Linux/.test(ua))dev='Linux ПК';
+  let m;if((m=ua.match(/OS (\d+)[_.](\d+)/))&&/iPhone|iPad|iPod/.test(ua+dev))os='iOS '+m[1]+'.'+m[2];else if((m=ua.match(/Android ([\d.]+)/)))os='Android '+m[1];else if(/Windows NT/.test(ua))os='Windows';else if(/Mac OS X/.test(ua))os='macOS';
+  br=window.TelegramWebviewProxy||/Telegram/i.test(ua)?'Telegram':/Instagram/.test(ua)?'Instagram':/FBAN|FBAV/.test(ua)?'Facebook':/Viber/i.test(ua)?'Viber':/EdgA?\//.test(ua)?'Edge':/OPR\/|Opera/.test(ua)?'Opera':/SamsungBrowser/.test(ua)?'Samsung Internet':/YaBrowser/.test(ua)?'Yandex':/CriOS|Chrome\//.test(ua)?'Chrome':/FxiOS|Firefox/.test(ua)?'Firefox':/Safari/.test(ua)?'Safari':'Інший';
+  ST.prof={device:dev,browser:br+(os?' · '+os:''),screen:screen.width+'×'+screen.height};
+  if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues)navigator.userAgentData.getHighEntropyValues(['model']).then(v=>{if(v.model&&/^Android/.test(dev))ST.prof.device='Android · '+v.model}).catch(()=>{});
+}
+function getIP(){
+  if(!C.stats.url||!C.stats.ip||ST.ip)return;
+  const ac=new AbortController();setTimeout(()=>ac.abort(),5000);
+  fetch('https://api.ipify.org?format=json',{signal:ac.signal,cache:'no-store'}).then(r=>r.json()).then(d=>{ST.ip=String(d.ip||'');if(ST.started)send('ip')}).catch(()=>{});
+}
+function send(type,extra){
+  if(!C.stats.url||!ST.sid)return;
+  const body=JSON.stringify({type,sid:ST.sid,name:ST.name,...ST.prof,ip:C.stats.ip?ST.ip:'',total:order.length,log:ST.log.join(' '),...extra});
+  try{fetch(C.stats.url,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body}).catch(()=>{})}catch(e){}
+}
+function newSession(){ST.sid=uid();ST.log=[];ST.started=true;send('start',{done:0,score:0})}
+
 /* ---------- тест ---------- */
 const app=$('#app');
 let order=[],i=0,score=0;
@@ -609,7 +667,23 @@ function start(){
   const n=C.questions.length;order=[...Array(n).keys()];
   if(C.shuffleQ)for(let k=n-1;k>0;k--){const j=Math.random()*(k+1)|0;[order[k],order[j]]=[order[j],order[k]]}
   i=0;score=0;
-  if(n)show();else app.innerHTML='<p class="empty">Запитань поки немає. Додай їх в адмінці.</p>';
+  if(!n){app.innerHTML='<p class="empty">Запитань поки немає. Додай їх в адмінці.</p>';return}
+  if(C.stats.url&&C.stats.askName&&!ST.name){intro();return}
+  if(C.stats.url)newSession();
+  show();
+}
+function intro(){
+  let saved='';try{saved=localStorage.getItem(NAMEKEY)||''}catch(e){}
+  app.innerHTML=`<form class="intro" id="introf"><label class="fld"><span>Твоє імʼя та прізвище${C.stats.nameReq?'':' (необовʼязково)'}</span><input id="nm" type="text" autocomplete="name" maxlength="60" value="${esc(saved)}" enterkeyhint="go"></label>
+  <p class="err" id="nmerr" aria-live="polite"></p>
+  <button class="go" type="submit">Почати тест</button>
+  ${C.stats.notice?`<p class="notice">${esc(C.stats.notice)}</p>`:''}</form>`;
+  $('#introf').addEventListener('submit',e=>{
+    e.preventDefault();const v=$('#nm').value.replace(/\s+/g,' ').trim();
+    if(C.stats.nameReq&&v.length<2){$('#nmerr').textContent='Введи імʼя, щоб почати';$('#nm').focus();return}
+    ST.name=v||'Без імені';try{localStorage.setItem(NAMEKEY,v)}catch(e){}
+    newSession();show();
+  });
 }
 function show(){
   const n=order.length,it=C.questions[order[i]];
@@ -626,6 +700,7 @@ function pick(n){
   const it=C.questions[order[i]],ok=n===it.a;
   app.querySelectorAll('.opts button').forEach(b=>{const k=+b.dataset.n;b.disabled=true;if(k===it.a)b.classList.add('right');else if(k===n)b.classList.add('wrong')});
   if(ok)score++;
+  ST.log.push((order[i]+1)+(ok?'✓':'✗'));send('answer',{done:i+1,score});
   $('#sc').textContent='Правильно: '+score;
   $('#bar').style.width=(i+1)/order.length*100+'%';
   const st=$('#st');
@@ -643,6 +718,7 @@ function next(){
 function end(){
   const n=order.length,p=score/n*100;
   const m=p>=C.hi?C.msgHi:p>=C.mid?C.msgMid:C.msgLo;
+  send('finish',{done:n,score});
   app.innerHTML=`<div class="end"><div class="bar"><i style="width:100%"></i></div>
   <div class="score">${score}/${n}</div>${m?`<p><b>${esc(m)}</b></p>`:''}
   ${C.tips.length?`<div class="tips"><b>${esc(C.tipsTitle)}</b><ol>${C.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>`:''}
@@ -689,6 +765,51 @@ function imgEd(q,x){
   <p class="hint">Висота «авто» показує фото в природних пропорціях. Для фону картки ширина й «після відповіді» не діють.</p>
   <div class="pv" id="pv${x}">${cardHTML(q,'')}</div>`:''}</div>`;
 }
+let SD=null,sFilter='all',sQuery='',sBusy=false;
+function statsTab(){
+  const u=D.stats.url,okU=!u||/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(u);
+  return `<h3 style="margin-top:0">Результати</h3>
+  <label class="fld"><span>Ключ перегляду (зберігається лише в цьому браузері)</span><input type="password" id="stkey" autocomplete="off" spellcheck="false" value="${esc(store.get(SKEY)||'')}"></label>
+  <button type="button" class="btn pri wide" data-act="sload">${sBusy?'Завантажую…':'Завантажити статистику'}</button>
+  <div id="sres">${statsView()}</div>
+  <h3>Налаштування збору</h3>
+  ${T('stats.url','Адреса веб-застосунку Google Apps Script',u,'placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocapitalize="off" spellcheck="false"')}
+  ${okU?'':'<p class="hint" style="color:var(--red)">Адреса має виглядати як https://script.google.com/macros/s/…/exec</p>'}
+  <p class="hint">Порожньо = статистика вимкнена. Після змін натисни «Опублікувати на сайт».</p>
+  ${CH('stats.askName','Просити імʼя перед початком тесту',D.stats.askName)}
+  ${CH('stats.nameReq','Імʼя обовʼязкове',D.stats.nameReq)}
+  ${CH('stats.ip','Записувати IP-адресу',D.stats.ip)}
+  ${TA('stats.notice','Попередження для учнів (під кнопкою «Почати»)',D.stats.notice,'rows="3"')}`;
+}
+const fdt=v=>{const d=new Date(v);return isNaN(d)?(v||''):d.toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};
+function statsView(){
+  if(!SD)return '<p class="hint" style="margin-top:10px">Встав ключ і натисни «Завантажити статистику».</p>';
+  const rows=SD.rows.slice().reverse(),fin=rows.filter(r=>r.status==='Завершено');
+  const avg=fin.length?(fin.reduce((a,r)=>a+(+r.score||0)/(+r.total||1),0)/fin.length*100).toFixed(0)+'%':'—';
+  const q=sQuery.toLowerCase();
+  const list=rows.filter(r=>(sFilter==='all'||(sFilter==='fin')===(r.status==='Завершено'))&&(!q||String(r.name).toLowerCase().includes(q)||String(r.ip).includes(q)));
+  return `<div class="sum"><div><b>${rows.length}</b><span>спроб</span></div><div><b>${fin.length}</b><span>до кінця</span></div><div><b>${rows.length-fin.length}</b><span>не завершили</span></div><div><b>${avg}</b><span>середній бал</span></div></div>
+  ${SD.url?`<p style="margin:0 0 10px"><a href="${esc(SD.url)}" target="_blank" rel="noopener">Відкрити Google-таблицю</a></p>`:''}
+  <div class="seg">${[['all','Усі'],['fin','Завершені'],['no','Не завершені']].map(([k,l])=>`<button type="button" data-act="sfilt" data-v="${k}" aria-pressed="${sFilter===k}">${l}</button>`).join('')}</div>
+  <label class="fld"><span>Пошук за імʼям або IP</span><input type="text" id="sq" value="${esc(sQuery)}"></label>
+  <div id="slist">${list.length?list.map(r=>`<div class="srow"><div class="srow-h"><b>${esc(r.name||'Без імені')}</b><span class="badge${r.status==='Завершено'?'':' no'}">${r.status==='Завершено'?'Завершено':'Не завершено'}</span></div>
+  <div class="smeta">${fdt(r.start)} · ${esc(r.score)}/${esc(r.total)} правильно · відповідей ${esc(r.done)}${r.mins!==''&&r.mins!=null?` · ${esc(r.mins)} хв`:''}</div>
+  <div class="smeta">${esc(r.device)} · ${esc(r.browser)} · ${esc(r.screen)}${r.ip?` · IP ${esc(r.ip)}`:''}</div>
+  ${r.log?`<div class="slog">${esc(r.log)}</div>`:''}</div>`).join(''):'<p class="hint">Нічого не знайдено.</p>'}</div>`;
+}
+async function loadStats(){
+  const key=($('#stkey').value||'').trim(),u=(D.stats.url||C.stats.url).trim();
+  if(!u){status('Спершу вкажи адресу Apps Script нижче',true);return}
+  if(!key){status('Встав ключ перегляду',true);$('#stkey').focus();return}
+  store.set(SKEY,key);sBusy=true;renderAdmin();
+  try{
+    const r=await fetch(u+'?key='+encodeURIComponent(key)+'&t='+Date.now(),{cache:'no-store'});
+    const d=await r.json();
+    if(!d.ok){stt={t:d.error==='key'?'Невірний ключ перегляду':'Помилка таблиці',err:true}}
+    else{SD=d;stt={t:'Завантажено: '+d.rows.length,err:false}}
+  }catch(e){stt={t:'Не вдалося отримати дані. Перевір адресу й доступ «Усі» у Apps Script',err:true}}
+  sBusy=false;renderAdmin();
+}
 const fontOpts=Object.keys(FONTS).map(f=>[f,f]);
 
 function qHTML(q,x,n){
@@ -724,6 +845,7 @@ function body(){
   ${CH('adminLink','Показувати посилання «Адмінка» внизу сторінки',D.adminLink)}
   <p class="hint" style="margin-top:4px">Якщо посилання сховане, адмінка відкривається за адресою сторінки з <b>#admin</b> у кінці.</p>
   <div class="btns"><button type="button" class="btn" data-act="lookreset">Повернути стандартний вигляд</button></div>`;
+  if(tab==='stats')return statsTab();
   if(tab==='txt')return `
   ${T('title','Заголовок',D.title)}<p class="hint">Слово в *зірочках* буде акцентного кольору.</p>
   ${TA('sub','Підзаголовок',D.sub,'rows="2"')}
@@ -761,7 +883,7 @@ function body(){
 }
 function renderAdmin(top){
   const sy=adm.scrollTop;
-  const tabs=[['q',`Запитання (${D.questions.length})`],['look','Вигляд'],['txt','Тексти'],['file','Публікація']];
+  const tabs=[['q',`Запитання (${D.questions.length})`],['look','Вигляд'],['txt','Тексти'],['stats','Статистика'],['file','Публікація']];
   adm.innerHTML=`<div class="ah"><div class="ah-top"><h2>Адмінка</h2><span class="status${stt.err?' err':''}" id="stt" aria-live="polite">${esc(stt.t)}</span></div>
   <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" aria-selected="${tab===k}" data-act="tab" data-v="${k}">${l}</button>`).join('')}</div></div>
   <div class="ab">${body()}</div>
@@ -785,7 +907,10 @@ function onField(e){
   if(LOOK.includes(p))applyLook(norm(D));
   const qm=p.match(/^questions\.(\d+)\./);if(qm){const pv=$('#pv'+qm[1]);if(pv)pv.innerHTML=cardHTML(normImgQ(D.questions[qm[1]]),'')}
 }
-adm.addEventListener('input',onField);
+adm.addEventListener('input',e=>{
+  if(e.target.id==='sq'){sQuery=e.target.value;const t=document.createElement('div');t.innerHTML=statsView();$('#slist').replaceWith(t.querySelector('#slist'));return}
+  onField(e);
+});
 adm.addEventListener('change',e=>{
   if(e.target.dataset.img!=null){
     const x=+e.target.dataset.img,f=e.target.files[0];if(!f)return;
@@ -828,6 +953,8 @@ adm.addEventListener('click',e=>{
       closeAdmin();break;
     case 'exphtml':exportHTML();break;
     case 'publish':publish(b);break;
+    case 'sload':if(!sBusy)loadStats();break;
+    case 'sfilt':sFilter=b.dataset.v;$('#sres').innerHTML=statsView();break;
     case 'imgdel':Qs[x].img=newImg();changed('Фото прибрано');renderAdmin();break;
     case 'expjson':download(JSON.stringify(norm(clone(D)),null,2),'fake-chy-fakt.json','application/json');status('JSON завантажено');break;
     case 'drop':store.del(KEY);hasLocal=false;C=EMB;D=clone(C);dirty=false;applyLook(C);start();stt={t:'Чернетку відкинуто',err:false};renderAdmin();break;
@@ -911,7 +1038,7 @@ function download(text,name,type){
 $('#admlink').addEventListener('click',openAdmin);
 addEventListener('hashchange',()=>{if(location.hash==='#admin'&&adm.hidden)openAdmin()});
 
-applyLook(C);start();
+profile();applyLook(C);getIP();start();
 if(location.hash==='#admin')openAdmin();
 }
 </script></body></html>
